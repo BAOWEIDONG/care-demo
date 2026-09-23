@@ -41,6 +41,13 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 @media (prefers-reduced-motion:reduce){.view.active{animation:none;}}
 .view.no-tab{padding-bottom:24px;}
 
+/* ===== 图标系统 ===== */
+.icon{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.14em;flex-shrink:0;}
+.tab .icon{width:23px;height:23px;}
+.ic .icon{width:26px;height:26px;color:#fff;stroke-width:1.7;}
+.mi .icon{width:18px;height:18px;color:#fff;stroke-width:1.8;}
+.type-switch .icon{width:17px;height:17px;vertical-align:-.22em;margin-right:5px;}
+
 /* ===== 顶部导航（玻璃） ===== */
 .navbar{
   position:sticky;top:0;z-index:50;display:flex;align-items:center;height:56px;padding:0 12px;
@@ -80,27 +87,30 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 .divider{height:1px;background:rgba(60,60,67,.08);margin:14px 0;}
 
 /* ===== 登录页（浅色） ===== */
-#view-login{background:none;padding-bottom:0;}
-.login-hero{padding:66px 28px 26px;color:var(--ink);text-align:center;}
+#view-login{background:radial-gradient(72% 30% at 50% 0%,rgba(255,138,66,.10),transparent 72%);padding-bottom:0;}
+.login-hero{padding:74px 28px 26px;color:var(--ink);text-align:center;}
 .login-logo{
-  width:74px;height:74px;margin:0 auto 16px;border-radius:23px;font-size:38px;
+  width:88px;height:88px;margin:0 auto 20px;border-radius:26px;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(255,102,0,.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+  background:var(--g-primary);
+  box-shadow:0 18px 36px rgba(255,90,0,.3),0 4px 10px rgba(255,90,0,.18),inset 0 1.5px 1px rgba(255,255,255,.5);
 }
-.login-hero h1{font-size:26px;font-weight:800;letter-spacing:1.5px;}
-.login-hero p{font-size:14px;color:var(--ink-3);margin-top:8px;letter-spacing:.5px;}
+.login-logo .icon{width:46px;height:46px;color:#fff;stroke-width:1.5;}
+.login-hero h1{font-size:30px;font-weight:800;letter-spacing:2px;}
+.login-hero p{font-size:14px;color:var(--ink-3);margin-top:9px;letter-spacing:.5px;}
 .login-panel{
   background:rgba(255,255,255,.9);backdrop-filter:blur(32px) saturate(1.8);-webkit-backdrop-filter:blur(32px) saturate(1.8);
   border:1px solid rgba(255,255,255,.95);border-radius:28px;margin:20px 18px 30px;padding:26px 22px 22px;
   box-shadow:0 18px 44px rgba(31,38,135,.08),0 4px 14px rgba(0,0,0,.04);
 }
-.login-panel h2{font-size:20px;font-weight:800;margin-bottom:20px;}
-.field{display:flex;align-items:center;gap:10px;background:rgba(120,120,128,.08);border-radius:14px;padding:13px 14px;margin-bottom:12px;transition:box-shadow .15s;}
-.field:focus-within{box-shadow:0 0 0 2.5px rgba(255,102,0,.35);background:#fff;}
-.field .ficon{font-size:18px;}
+.login-panel h2{font-size:20px;font-weight:800;margin-bottom:18px;}
+.field-group{background:rgba(120,120,128,.08);border-radius:16px;overflow:hidden;}
+.field{display:flex;align-items:center;gap:11px;padding:14px 15px;}
+.field .icon{width:19px;height:19px;color:#8E8E93;stroke-width:1.8;}
+.field-group .field + .field{border-top:.5px solid rgba(60,60,67,.12);}
 .field input{flex:1;border:none;background:none;height:26px;font-weight:500;}
 .field input::placeholder{color:#B9BAC2;font-weight:400;}
+.field:focus-within{background:#fff;}
 .code-btn{flex-shrink:0;border:none;color:#fff;background:var(--g-primary);border-radius:16px;font-size:13px;font-weight:600;padding:6px 12px;box-shadow:0 4px 10px rgba(255,90,0,.25);}
 .code-btn:disabled{background:rgba(120,120,128,.14);color:var(--ink-3);box-shadow:none;}
 .agree-row{display:flex;align-items:flex-start;gap:9px;margin:16px 0 18px;font-size:13px;color:var(--ink-2);line-height:1.55;}
@@ -178,7 +188,12 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;
   background:none;color:var(--ink-3);font-size:12px;border-radius:21px;transition:background .18s,color .18s;
 }
-.tab .tico{font-size:22px;line-height:1;filter:grayscale(.4);transition:filter .18s;}
+.tab .tico{display:none;}
+.photo .img{height:100px;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,#FFF4EA 0%,#FFE7D2 100%);}
+.photo .img .icon{width:44px;height:44px;color:#E85800;stroke-width:1.5;}
+.tl-time .icon{width:13px;height:13px;margin-right:3px;vertical-align:-.16em;}
+.upload-box{border:1.5px dashed rgba(255,102,0,.4);border-radius:16px;padding:20px;text-align:center;color:var(--ink-3);font-size:14px;background:rgba(255,102,0,.04);}
+.upload-box .icon{width:30px;height:30px;color:#F26A00;stroke-width:1.7;display:block;margin:0 auto 7px;}
 .tab.on{background:var(--g-primary);color:#fff;font-weight:700;box-shadow:0 6px 16px rgba(255,90,0,.32),inset 0 1px 1px rgba(255,255,255,.4);}
 .tab.on .tico{filter:none;}
 
@@ -310,17 +325,39 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 <body>
 <div id="app">
 
+<!-- ============ SVG 图标库（SF Symbols 风格描边） ============ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<symbol id="i-mark" viewBox="0 0 24 24"><path d="M3.8 9.8 12 3.6l8.2 6.2v9a1.6 1.6 0 0 1-1.6 1.6H5.4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 16.6c-2-1.5-3.4-2.8-3.4-4.3a1.8 1.8 0 0 1 3.4-.8 1.8 1.8 0 0 1 3.4.8c0 1.5-1.4 2.8-3.4 4.3z"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9.5 12 2.5l9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9.5 22v-8h5v8"/></symbol>
+<symbol id="i-heart-home" viewBox="0 0 24 24"><path d="M3 9.5 12 2.5l9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 16.8c-1.8-1.4-3.1-2.6-3.1-3.9a1.7 1.7 0 0 1 3.1-.9 1.7 1.7 0 0 1 3.1.9c0 1.3-1.3 2.5-3.1 3.9z"/></symbol>
+<symbol id="i-hospital" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="18" rx="2"/><path d="M12 8v6M9 11h6M9.5 21.5v-4h5v4"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16.5" rx="2"/><path d="M16 2.5V7M8 2.5V7M3.5 11h17"/></symbol>
+<symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2.5" width="8" height="4" rx="1"/><path d="M16 4.5h2a2 2 0 0 1 2 2V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2h2M9 12h6M9 16h4"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21.5v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7.5" r="4"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 2.5H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.5z"/><path d="M14 2.5v6h6M9 13h6M9 17h6"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11.5 2 2 4-4"/></symbol>
+<symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5M12 3v12"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+</svg>
+
 <!-- ============ 登录页 ============ -->
 <div id="view-login" class="view no-tab active">
   <div class="login-hero">
-    <div class="login-logo">🏥</div>
+    <div class="login-logo"><svg class="icon"><use href="#i-mark"/></svg></div>
     <h1>照护服务</h1>
     <p>居家照护 · 院内照护 一站式预约平台</p>
   </div>
   <div class="login-panel">
     <h2>跳转登录</h2>
-    <div class="field"><span class="ficon">📱</span><input id="login-phone" type="text" inputmode="numeric" maxlength="11" placeholder="请输入手机号"></div>
-    <div class="field"><span class="ficon">🔐</span><input id="login-code" type="text" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="code-btn" id="btn-code" onclick="sendCode()">获取验证码</button></div>
+    <div class="field-group">
+      <div class="field"><svg class="icon"><use href="#i-phone"/></svg><input id="login-phone" type="text" inputmode="numeric" maxlength="11" placeholder="请输入手机号"></div>
+      <div class="field"><svg class="icon"><use href="#i-lock"/></svg><input id="login-code" type="text" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="code-btn" id="btn-code" onclick="sendCode()">获取验证码</button></div>
+    </div>
     <div class="agree-row">
       <input type="checkbox" class="checkbox" id="chk-agree">
       <span>我已阅读并同意 <a href="javascript:void(0)" onclick="openAgreement('user')">《用户服务协议》</a> 和 <a href="javascript:void(0)" onclick="openAgreement('privacy')">《个人信息处理授权书》</a>，同意平台为实现照护服务目的处理我的个人信息</span>
@@ -378,8 +415,8 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   <div class="navbar"><button class="back" onclick="showTab(currentTab)">‹</button><div class="title">服务预约</div><div class="ph"></div></div>
   <div class="card">
     <div class="type-switch">
-      <button id="ts-home" onclick="switchType('home')">🏠 居家照护</button>
-      <button id="ts-hosp" onclick="switchType('hosp')">🏥 院内照护</button>
+      <button id="ts-home" onclick="switchType('home')"><svg class="icon"><use href="#i-heart-home"/></svg>居家照护</button>
+      <button id="ts-hosp" onclick="switchType('hosp')"><svg class="icon"><use href="#i-hospital"/></svg>院内照护</button>
     </div>
     <label class="form-label"><span class="req">*</span>服务对象姓名</label>
     <input class="form-input" id="f-name" placeholder="请输入服务对象姓名">
@@ -414,7 +451,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     <input class="form-input" id="f-date" type="date">
     <div id="upload-wrap" style="display:none;">
       <label class="form-label">就医材料上传（出院小结、住院申请单等，用于服务评估核验）</label>
-      <div class="upload-box" onclick="this.querySelector('.up').textContent='✅';this.style.borderColor='#0FA35B';this.querySelector('.t').textContent='已选择：出院小结.pdf（演示）'"><span class="up">📤</span><span class="t">点击上传 出院小结 / 住院申请单</span></div>
+      <div class="upload-box" onclick="this.querySelector('.t').textContent='已选择：出院小结.pdf（演示）';this.style.borderColor='rgba(15,163,91,.5)';this.style.color='#0B8A4E';"><svg class="icon"><use href="#i-upload"/></svg><span class="t">点击上传 出院小结 / 住院申请单</span></div>
     </div>
     <div class="price-hint"><span>参考价格（按评估方案确认后结算）</span><b>300元/天</b></div>
     <button class="btn" style="margin-top:16px;" onclick="submitBooking()">提交预约</button>
@@ -472,10 +509,10 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   </div>
   <div class="me-list">
     <div class="card">
-      <button class="me-row" onclick="goto('view-orders')"><span class="mi">📋</span>我的订单<span class="arr">›</span></button>
-      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi">📄</span>个人信息处理授权书<span class="arr">›</span></button>
-      <button class="me-row" onclick="openAgreement('user')"><span class="mi">🧾</span>用户服务协议<span class="arr">›</span></button>
-      <button class="me-row" onclick="alert('演示环境：服务保障热线 400-000-0000（7×24小时）')"><span class="mi">☎️</span>服务保障热线（7×24）<span class="arr">›</span></button>
+      <button class="me-row" onclick="goto('view-orders')"><span class="mi"><svg class="icon"><use href="#i-clipboard"/></svg></span>我的订单<span class="arr">›</span></button>
+      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi"><svg class="icon"><use href="#i-shield-check"/></svg></span>个人信息处理授权书<span class="arr">›</span></button>
+      <button class="me-row" onclick="openAgreement('user')"><span class="mi"><svg class="icon"><use href="#i-doc"/></svg></span>用户服务协议<span class="arr">›</span></button>
+      <button class="me-row" onclick="alert('演示环境：服务保障热线 400-000-0000（7×24小时）')"><span class="mi"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线（7×24）<span class="arr">›</span></button>
     </div>
     <div class="card">
       <div class="card-title"><span class="dot"></span>演示：权益配置</div>
@@ -492,10 +529,10 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 
 <!-- ============ 底部标签栏 ============ -->
 <div class="tabbar hidden" id="tabbar">
-  <button class="tab on" data-tab="view-home" onclick="showTab('view-home')"><span class="tico">🏠</span>首页</button>
-  <button class="tab" data-tab="view-book" onclick="showTab('view-book')"><span class="tico">📝</span>预约</button>
-  <button class="tab" data-tab="view-orders" onclick="showTab('view-orders')"><span class="tico">📋</span>订单</button>
-  <button class="tab" data-tab="view-me" onclick="showTab('view-me')"><span class="tico">👤</span>我的</button>
+  <button class="tab on" data-tab="view-home" onclick="showTab('view-home')"><svg class="icon"><use href="#i-home"/></svg>首页</button>
+  <button class="tab" data-tab="view-book" onclick="showTab('view-book')"><svg class="icon"><use href="#i-calendar"/></svg>预约</button>
+  <button class="tab" data-tab="view-orders" onclick="showTab('view-orders')"><svg class="icon"><use href="#i-clipboard"/></svg>订单</button>
+  <button class="tab" data-tab="view-me" onclick="showTab('view-me')"><svg class="icon"><use href="#i-user"/></svg>我的</button>
 </div>
 
 <!-- ============ 二次授权确认弹窗 ============ -->
@@ -535,9 +572,9 @@ var state = {
      info:{selfcare:"半自理", health:"高血压，行动缓慢，需协助洗漱", place:"深圳市南山区科苑花园 35栋2单元801", duration:"5天", start:"2026-09-22"},
      nodeTimes:{0:"09-22 10:32",1:"09-22 10:35",2:"09-22 10:40",3:"09-23 08:03",4:"09-23 14:26",5:"09-23 17:05",6:"09-23 17:08"},
      photos:[
-       {label:"到岗",icon:"🚪",time:"09-23 08:03",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"到岗照片：含门牌/住址标识水印"},
-       {label:"服务过程",icon:"🛏️",time:"09-23 14:26",loc:"深圳市南山区科苑花园35栋2单元801（室内）",note:"过程照片：含时间地点水印"},
-       {label:"离岗",icon:"🌇",time:"09-23 17:05",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"离岗照片：含门牌/住址标识水印"}]},
+       {label:"到岗",icon:"i-home",time:"09-23 08:03",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"到岗照片：含门牌/住址标识水印"},
+       {label:"服务过程",icon:"i-heart",time:"09-23 14:26",loc:"深圳市南山区科苑花园35栋2单元801（室内）",note:"过程照片：含时间地点水印"},
+       {label:"离岗",icon:"i-sun",time:"09-23 17:05",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"离岗照片：含门牌/住址标识水印"}]},
     {id:"ZH2026092100007", type:"hosp", name:"王建国", status:7, worker:{name:"陈国强",age:51,hometown:"广东 梅州",cert:"医疗照护员 · 已实名核验"},
      info:{selfcare:"失能", health:"股骨骨折术后卧床", place:"深圳市第二人民医院 骨科 3号楼12床", duration:"3天", start:"2026-09-18"},
      nodeTimes:{}, photos:[]}
@@ -546,8 +583,8 @@ var state = {
 };
 var NODES = ["提交预约","接单","派单","护工到岗","服务过程","护工离岗","核销","满意度评价"];
 var SVC_META = {
-  home:{icon:"🏠", title:"居家照护", desc:"上门照护 · 住家陪护"},
-  hosp:{icon:"🏥", title:"院内照护", desc:"住院陪护 · 一对一照护"}
+  home:{icon:"i-heart-home", title:"居家照护", desc:"上门照护 · 住家陪护"},
+  hosp:{icon:"i-hospital", title:"院内照护", desc:"住院陪护 · 一对一照护"}
 };
 var STATUS_TEXT = {1:"待接单",2:"已派单",3:"服务中（已到岗）",4:"服务中",5:"待核销",6:"待评价",7:"已完成",0:"评估确认中"};
 var RATE_TAG_POOL = ["按时到岗","服务专业","耐心细致","沟通顺畅","房间整洁","响应及时"];
@@ -603,7 +640,7 @@ function renderHomeSvc(){
   g.innerHTML=state.entitlements.map(function(t){
     var m=SVC_META[t];
     return "<div class='svc-card' onclick=\"gotoBook('"+t+"')\">"+
-      "<div class='ic'>"+m.icon+"</div>"+
+      "<div class='ic'><svg class='icon'><use href='#"+m.icon+"'/></svg></div>"+
       "<h3>"+m.title+"</h3><p>"+m.desc+"</p>"+
       "<span class='go'>立即预约 ›</span></div>";
   }).join("");
@@ -737,7 +774,7 @@ function renderOrders(){
   if(!state.orders.length){el.innerHTML="<div class='empty'>暂无订单，去首页预约服务吧</div>";return;}
   el.innerHTML=state.orders.map(function(o,i){
     return "<div class='order-card' onclick='openOrder("+i+")'>"+
-      "<div class='order-head'><b>"+(o.type==="home"?"🏠 居家照护":"🏥 院内照护")+"</b><span class='tag "+(o.status>=7?"green":(o.status>=3&&o.status<=5?"":"gray"))+"'>"+statusTag(o.status)+"</span></div>"+
+      "<div class='order-head'><b>"+(o.type==="home"?"居家照护":"院内照护")+"</b><span class='tag "+(o.status>=7?"green":(o.status>=3&&o.status<=5?"":"gray"))+"'>"+statusTag(o.status)+"</span></div>"+
       "<div class='ord-no'>订单号 "+o.id+"</div><div class='divider'></div>"+
       "<div class='order-info'><span>服务对象</span><span>"+o.name+"（"+o.info.selfcare+"）</span>"+
       "<span>服务地点</span><span>"+o.info.place+"</span>"+
@@ -763,7 +800,7 @@ function openOrder(i){
     if(n===7)desc="感谢您对本次服务的评价";
     if(done && o.nodeTimes[n])time=o.nodeTimes[n];
     tl+="<div class='tl-item "+(done?"done":"")+"'><span class='nd'></span><div class='tl-t'>"+NODES[n]+"</div>"+
-        (done?"<div class='tl-d'>"+desc+"</div>"+(time?"<div class='tl-time'>🕓 "+time+"</div>":""):"")+"</div>";
+        (done?"<div class='tl-d'>"+desc+"</div>"+(time?"<div class='tl-time'><svg class='icon'><use href='#i-clock'/></svg>"+time+"</div>":""):"")+"</div>";
   }
   var workerHtml="";
   if(o.worker){
@@ -774,7 +811,7 @@ function openOrder(i){
   var photoHtml="";
   if(o.photos.length){
     photoHtml="<div class='card'><div class='card-title'><span class='dot'></span>水印照片自证</div><div class='photo-grid'>"+
-      o.photos.map(function(p){return "<div class='photo'><div class='img'>"+p.icon+"</div><div class='wm'><b>["+p.label+"]</b> "+p.time+"<br>📍"+p.loc+"</div></div>";}).join("")+
+      o.photos.map(function(p){return "<div class='photo'><div class='img'><svg class='icon'><use href='#"+p.icon+"'/></svg></div><div class='wm'><b>["+p.label+"]</b> "+p.time+"<br>📍"+p.loc+"</div></div>";}).join("")+
       "</div><div class='notice' style='margin-top:12px;'>水印照片含时间与地点信息，为服务时长认定的唯一自证依据，平台后台核验。</div></div>";
   }
   var actionHtml="";
@@ -808,9 +845,9 @@ function demoStep(k){
   o.status=parseInt(k);
   o.nodeTimes[o.status]=nowHM();
   if(o.status===2&&!o.worker)o.worker={name:"赵春梅",age:47,hometown:"广西 桂林",cert:"养老护理员（中级）· 已实名核验"};
-  if(o.status===3)o.photos.push({label:"到岗",icon:"🚪",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
-  if(o.status===4)o.photos.push({label:"服务过程",icon:"🛏️",time:nowHM(),loc:"服务地点（室内）",note:""});
-  if(o.status===5)o.photos.push({label:"离岗",icon:"🌇",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
+  if(o.status===3)o.photos.push({label:"到岗",icon:"i-home",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
+  if(o.status===4)o.photos.push({label:"服务过程",icon:"i-heart",time:nowHM(),loc:"服务地点（室内）",note:""});
+  if(o.status===5)o.photos.push({label:"离岗",icon:"i-sun",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
   openOrder(state.curOrder);
   alert("已推进至【"+NODES[o.status]+"】节点");
 }
