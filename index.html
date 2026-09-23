@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>壹账通照护服务</title>
+<style>
+:root{
+  --pa-orange:#FF6600;
+  --pa-orange-2:#FF8C42;
+  --pa-orange-light:#FFF1E6;
+  --pa-orange-border:#FFD9BC;
+  --pa-blue:#1A5CA8;
+  --ink:#262626;
+  --ink-2:#595959;
+  --ink-3:#8C8C8C;
+  --line:#F0F0F0;
+  --bg:#F5F6F8;
+  --green:#0FA35B;
+  --red:#E2432E;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;}
+button{font-family:inherit;border:none;cursor:pointer;}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outline:none;}
+#app{max-width:420px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;}
+.view{display:none;min-height:100vh;padding-bottom:76px;}
+.view.active{display:block;}
+.view.no-tab{padding-bottom:20px;}
+
+/* ===== 顶部导航 ===== */
+.navbar{position:sticky;top:0;z-index:50;background:#fff;display:flex;align-items:center;height:52px;padding:0 12px;border-bottom:1px solid var(--line);}
+.navbar .back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--ink);background:none;}
+.navbar .title{flex:1;text-align:center;font-size:17px;font-weight:600;}
+.navbar .ph{width:36px;}
+
+/* ===== 通用卡片 ===== */
+.card{background:#fff;border-radius:14px;margin:12px;padding:16px;}
+.card-title{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-title .dot{width:5px;height:18px;border-radius:3px;background:var(--pa-orange);}
+.btn{display:block;width:100%;height:48px;border-radius:24px;background:linear-gradient(90deg,var(--pa-orange-2),var(--pa-orange));color:#fff;font-size:17px;font-weight:600;}
+.btn:active{opacity:.85;}
+.btn.plain{background:#fff;color:var(--pa-orange);border:1.5px solid var(--pa-orange);}
+.btn:disabled{background:#FFD9BC;color:#fff;cursor:not-allowed;}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:6px;background:var(--pa-orange-light);color:var(--pa-orange);}
+.tag.green{background:#E6F7EF;color:var(--green);}
+.tag.gray{background:#F2F3F5;color:var(--ink-2);}
+.divider{height:1px;background:var(--line);margin:12px 0;}
+
+/* ===== 登录页 ===== */
+#view-login{background:linear-gradient(180deg,#FF7A1F 0%,#FF6600 32%,var(--bg) 33%);}
+.login-hero{padding:56px 28px 24px;color:#fff;text-align:center;}
+.login-logo{width:64px;height:64px;margin:0 auto 14px;border-radius:18px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:34px;}
+.login-hero h1{font-size:24px;font-weight:700;letter-spacing:1px;}
+.login-hero p{font-size:14px;opacity:.92;margin-top:6px;}
+.login-panel{background:#fff;border-radius:16px;margin:0 20px;padding:24px 20px 20px;box-shadow:0 8px 24px rgba(255,102,0,.12);}
+.login-panel h2{font-size:19px;margin-bottom:20px;}
+.field{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:12px 0;}
+.field .ficon{font-size:18px;}
+.field input{flex:1;border:none;background:none;height:26px;}
+.field input::placeholder{color:#BFBFBF;}
+.code-btn{flex-shrink:0;border:1.5px solid var(--pa-orange);color:var(--pa-orange);background:#fff;border-radius:16px;font-size:13px;padding:5px 10px;}
+.code-btn:disabled{border-color:#D9D9D9;color:#BFBFBF;}
+.agree-row{display:flex;align-items:flex-start;gap:8px;margin:14px 0 16px;font-size:13px;color:var(--ink-2);}
+.agree-row a{color:var(--pa-blue);text-decoration:none;}
+.checkbox{width:18px;height:18px;flex-shrink:0;appearance:none;border:1.5px solid #D9D9D9;border-radius:50%;background:#fff;position:relative;margin-top:2px;}
+.checkbox:checked{border-color:var(--pa-orange);background:var(--pa-orange);}
+.checkbox:checked::after{content:"✓";color:#fff;font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);}
+.login-tip{margin-top:14px;text-align:center;font-size:12px;color:var(--ink-3);}
+
+/* ===== 协议页 ===== */
+.agreement-body{padding:16px 20px;font-size:14px;color:var(--ink-2);background:#fff;}
+.agreement-body h3{font-size:16px;color:var(--ink);margin:14px 0 6px;}
+.agreement-body p{margin-bottom:8px;}
+.agreement-foot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#fff;padding:12px 20px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;}
+.agreement-foot .btn{flex:1;height:44px;}
+
+/* ===== 首页 ===== */
+.home-top{background:linear-gradient(135deg,#FF8C42,#FF6600);padding:20px 16px 64px;color:#fff;}
+.home-top .hi{font-size:18px;font-weight:700;}
+.home-top .sub{font-size:13px;opacity:.92;margin-top:4px;}
+.home-body{margin-top:-48px;}
+.svc-grid{display:flex;gap:12px;padding:0 12px;}
+.svc-card{flex:1;background:#fff;border-radius:14px;padding:16px 14px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.05);}
+.svc-card .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px;}
+.svc-card h3{font-size:17px;margin-bottom:4px;}
+.svc-card p{font-size:13px;color:var(--ink-3);}
+.svc-card .go{margin-top:10px;display:inline-block;font-size:13px;color:var(--pa-orange);font-weight:600;}
+.stat-strip{display:flex;margin:12px;padding:14px 0;background:#fff;border-radius:14px;}
+.stat-strip .st{flex:1;text-align:center;border-right:1px solid var(--line);}
+.stat-strip .st:last-child{border-right:none;}
+.stat-strip b{display:block;font-size:20px;color:var(--pa-orange);}
+.stat-strip span{font-size:12px;color:var(--ink-3);}
+.svc-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+.svc-item:last-child{border-bottom:none;}
+.svc-item .n{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--pa-orange-light);color:var(--pa-orange);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.svc-item h4{font-size:15px;margin-bottom:2px;}
+.svc-item p{font-size:13px;color:var(--ink-3);}
+.guarantee{display:flex;gap:10px;}
+.guarantee .g{flex:1;background:var(--pa-orange-light);border-radius:12px;padding:12px 10px;text-align:center;}
+.guarantee .g b{display:block;font-size:14px;color:var(--pa-orange);margin-bottom:2px;}
+.guarantee .g span{font-size:12px;color:var(--ink-2);}
+
+/* ===== 底部标签栏 ===== */
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#fff;border-top:1px solid var(--line);display:flex;z-index:60;padding-bottom:env(safe-area-inset-bottom);}
+.tabbar.hidden{display:none;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 6px;background:none;color:var(--ink-3);font-size:12px;}
+.tab .tico{font-size:22px;line-height:1;}
+.tab.on{color:var(--pa-orange);font-weight:600;}
+
+/* ===== 表单 ===== */
+.form-label{font-size:14px;color:var(--ink-2);margin:14px 0 6px;display:block;}
+.form-label .req{color:var(--red);margin-right:2px;}
+.form-input,.form-select,.form-textarea{width:100%;border:1.5px solid #E5E6EB;border-radius:10px;padding:11px 12px;background:#FAFAFB;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--pa-orange);background:#fff;}
+.form-textarea{min-height:72px;resize:none;}
+.seg{display:flex;gap:8px;flex-wrap:wrap;}
+.seg button{border:1.5px solid #E5E6EB;background:#fff;border-radius:18px;padding:8px 16px;font-size:14px;color:var(--ink-2);}
+.seg button.on{border-color:var(--pa-orange);color:var(--pa-orange);background:var(--pa-orange-light);font-weight:600;}
+.upload-box{border:1.5px dashed #D9D9D9;border-radius:12px;padding:18px;text-align:center;color:var(--ink-3);font-size:14px;background:#FAFAFB;}
+.upload-box .up{font-size:26px;display:block;margin-bottom:4px;color:var(--pa-orange);}
+.type-switch{display:flex;background:#F2F3F5;border-radius:12px;padding:4px;margin-bottom:4px;}
+.type-switch button{flex:1;border-radius:9px;padding:9px 0;font-size:15px;background:none;color:var(--ink-2);}
+.type-switch button.on{background:#fff;color:var(--pa-orange);font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+.sticky-submit{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:60;}
+.price-hint{display:flex;justify-content:space-between;align-items:center;background:var(--pa-orange-light);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink-2);margin-top:12px;}
+.price-hint b{color:var(--pa-orange);font-size:16px;}
+
+/* ===== 弹窗 ===== */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;display:none;align-items:flex-end;justify-content:center;}
+.mask.show{display:flex;}
+.sheet{background:#fff;width:100%;max-width:420px;border-radius:16px 16px 0 0;padding:20px 18px calc(16px + env(safe-area-inset-bottom));max-height:78vh;overflow-y:auto;}
+.sheet h3{font-size:17px;text-align:center;margin-bottom:10px;}
+.sheet .close{position:absolute;right:14px;top:12px;background:none;font-size:20px;color:var(--ink-3);}
+.auth-words{background:#FAFAFB;border-radius:10px;padding:12px;font-size:13px;color:var(--ink-2);margin:10px 0 14px;}
+.auth-words b{color:var(--pa-orange);}
+.confirm-grid{display:grid;grid-template-columns:88px 1fr;gap:6px 10px;font-size:14px;margin-bottom:14px;}
+.confirm-grid .k{color:var(--ink-3);}
+
+/* ===== 评估页 ===== */
+.assess-ok{text-align:center;padding:26px 0 10px;}
+.assess-ok .okic{width:64px;height:64px;border-radius:50%;background:#E6F7EF;color:var(--green);font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.assess-ok h2{font-size:19px;margin-bottom:4px;}
+.assess-ok p{font-size:13px;color:var(--ink-3);}
+.plan-grid{display:grid;grid-template-columns:96px 1fr;gap:10px 8px;font-size:14px;}
+.plan-grid .k{color:var(--ink-3);}
+.plan-grid .v{color:var(--ink);font-weight:500;}
+.notice{display:flex;gap:8px;background:var(--pa-orange-light);border-radius:10px;padding:10px 12px;font-size:13px;color:#A85000;margin-top:12px;}
+
+/* ===== 订单 ===== */
+.order-card{background:#fff;border-radius:14px;margin:12px;padding:16px;}
+.order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.order-head b{font-size:16px;}
+.ord-no{font-size:12px;color:var(--ink-3);}
+.order-info{font-size:14px;color:var(--ink-2);display:grid;grid-template-columns:auto 1fr;gap:4px 10px;}
+.timeline{position:relative;margin-left:10px;}
+.tl-item{position:relative;padding:0 0 22px 24px;}
+.tl-item::before{content:"";position:absolute;left:5px;top:16px;bottom:-2px;width:2px;background:var(--line);}
+.tl-item:last-child::before{display:none;}
+.tl-item .nd{position:absolute;left:0;top:3px;width:12px;height:12px;border-radius:50%;background:#E5E6EB;}
+.tl-item.done .nd{background:var(--pa-orange);box-shadow:0 0 0 4px var(--pa-orange-light);}
+.tl-item.done .tl-t{color:var(--ink);font-weight:600;}
+.tl-item .tl-t{font-size:15px;color:var(--ink-3);}
+.tl-item .tl-d{font-size:12px;color:var(--ink-3);margin-top:2px;}
+.tl-item .tl-time{font-size:12px;color:var(--pa-orange);margin-top:2px;}
+.worker-card{display:flex;gap:12px;align-items:center;}
+.avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FF6600);color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.worker-card h4{font-size:16px;}
+.worker-card p{font-size:13px;color:var(--ink-3);margin-top:2px;}
+.verified{display:inline-flex;align-items:center;gap:3px;font-size:12px;color:var(--green);}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.photo{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#FAFAFB;}
+.photo .img{height:96px;display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,#FFE8D5,#FFD9BC);}
+.photo .wm{font-size:11px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;line-height:1.45;}
+.photo .wm b{color:#FFC58A;}
+.rate-stars{display:flex;gap:6px;justify-content:center;font-size:34px;margin:14px 0;}
+.rate-stars button{background:none;font-size:34px;color:#E5E6EB;transition:color .15s;}
+.rate-stars button.on{color:var(--pa-orange);}
+.rate-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;}
+.rate-tags button{border:1.5px solid #E5E6EB;background:#fff;border-radius:16px;padding:7px 14px;font-size:13px;color:var(--ink-2);}
+.rate-tags button.on{border-color:var(--pa-orange);color:var(--pa-orange);background:var(--pa-orange-light);}
+
+/* ===== 我的 ===== */
+.me-top{background:linear-gradient(135deg,#FF8C42,#FF6600);padding:26px 20px 56px;color:#fff;display:flex;align-items:center;gap:14px;}
+.me-top .avatar{background:rgba(255,255,255,.25);}
+.me-top h2{font-size:19px;}
+.me-top p{font-size:13px;opacity:.9;}
+.me-list{margin-top:-36px;}
+.me-row{display:flex;align-items:center;gap:12px;padding:15px 4px;border-bottom:1px solid var(--line);font-size:15px;background:none;width:100%;text-align:left;}
+.me-row:last-child{border-bottom:none;}
+.me-row .mi{width:34px;height:34px;border-radius:10px;background:var(--pa-orange-light);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.me-row .arr{margin-left:auto;color:#C9CDD4;}
+.empty{text-align:center;color:var(--ink-3);padding:50px 0;font-size:14px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ============ 登录页 ============ -->
+<div id="view-login" class="view no-tab active">
+  <div class="login-hero">
+    <div class="login-logo">🏥</div>
+    <h1>壹账通照护服务</h1>
+    <p>居家照护 · 院内照护 一站式预约平台</p>
+  </div>
+  <div class="login-panel">
+    <h2>跳转登录</h2>
+    <div class="field"><span class="ficon">📱</span><input id="login-phone" type="text" inputmode="numeric" maxlength="11" placeholder="请输入手机号"></div>
+    <div class="field"><span class="ficon">🔐</span><input id="login-code" type="text" inputmode="numeric" maxlength="6" placeholder="请输入验证码"><button class="code-btn" id="btn-code" onclick="sendCode()">获取验证码</button></div>
+    <div class="agree-row">
+      <input type="checkbox" class="checkbox" id="chk-agree">
+      <span>我已阅读并同意 <a href="javascript:void(0)" onclick="openAgreement('user')">《用户服务协议》</a> 和 <a href="javascript:void(0)" onclick="openAgreement('privacy')">《个人信息处理授权书》</a>，同意平台为实现照护服务目的处理我的个人信息</span>
+    </div>
+    <button class="btn" onclick="doLogin()">登 录</button>
+    <div class="login-tip">演示环境：任意手机号 + 验证码 123456</div>
+  </div>
+</div>
+
+<!-- ============ 协议签署页 ============ -->
+<div id="view-agreement" class="view no-tab">
+  <div class="navbar"><button class="back" onclick="backFromAgreement()">‹</button><div class="title" id="ag-title">协议详情</div><div class="ph"></div></div>
+  <div class="agreement-body" id="ag-body"></div>
+  <div class="agreement-foot">
+    <input type="checkbox" class="checkbox" id="chk-ag-sign">
+    <span style="font-size:13px;color:var(--ink-2);flex-shrink:0;">我已阅读并同意</span>
+    <button class="btn" id="btn-ag-sign" onclick="signAgreement()">同意并签署</button>
+  </div>
+</div>
+
+<!-- ============ 首页 ============ -->
+<div id="view-home" class="view">
+  <div class="home-top">
+    <div class="hi" id="home-hi">您好，客户</div>
+    <div class="sub">平安集团旗下 · 专业照护服务已就绪</div>
+  </div>
+  <div class="home-body">
+    <div class="svc-grid">
+      <div class="svc-card" onclick="gotoBook('home')">
+        <div class="ic" style="background:var(--pa-orange-light);">🏠</div>
+        <h3>居家照护</h3>
+        <p>上门照护 · 住家陪护</p>
+        <span class="go">立即预约 ›</span>
+      </div>
+      <div class="svc-card" onclick="gotoBook('hosp')">
+        <div class="ic" style="background:#E8F1FB;">🏥</div>
+        <h3>院内照护</h3>
+        <p>住院陪护 · 一对一照护</p>
+        <span class="go">立即预约 ›</span>
+      </div>
+    </div>
+    <div class="stat-strip">
+      <div class="st"><b>2小时</b><span>预约后首次响应</span></div>
+      <div class="st"><b>24小时</b><span>内护工到岗</span></div>
+      <div class="st"><b>7×24</b><span>服务保障热线</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>服务内容</div>
+      <div class="svc-item"><span class="n">1</span><div><h4>基本生活照护</h4><p>协助进食、饮水、翻身、移动等日常生活照料</p></div></div>
+      <div class="svc-item"><span class="n">2</span><div><h4>清洁与卫生</h4><p>个人清洁协助、居室与床单位卫生整理</p></div></div>
+      <div class="svc-item"><span class="n">3</span><div><h4>情况观察</h4><p>日常身体状况观察与异常情况及时反馈</p></div></div>
+      <div class="svc-item"><span class="n">4</span><div><h4>专项照护</h4><p>按评估方案执行的针对性专业照护</p></div></div>
+      <div class="svc-item"><span class="n">5</span><div><h4>关怀与陪同</h4><p>情感关怀、院内陪检与就医陪同</p></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>服务保障</div>
+      <div class="guarantee">
+        <div class="g"><b>实名核验</b><span>护工实名认证</span></div>
+        <div class="g"><b>水印留痕</b><span>三节点照片自证</span></div>
+        <div class="g"><b>平台核验</b><span>节点核验结算</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 预约页 ============ -->
+<div id="view-book" class="view no-tab">
+  <div class="navbar"><button class="back" onclick="showTab(currentTab)">‹</button><div class="title">服务预约</div><div class="ph"></div></div>
+  <div class="card">
+    <div class="type-switch">
+      <button id="ts-home" onclick="switchType('home')">🏠 居家照护</button>
+      <button id="ts-hosp" onclick="switchType('hosp')">🏥 院内照护</button>
+    </div>
+    <label class="form-label"><span class="req">*</span>服务对象姓名</label>
+    <input class="form-input" id="f-name" placeholder="请输入服务对象姓名">
+    <label class="form-label"><span class="req">*</span>联系电话</label>
+    <input class="form-input" id="f-phone" type="text" inputmode="numeric" maxlength="11" placeholder="请输入联系电话">
+    <label class="form-label"><span class="req">*</span>自理能力状况</label>
+    <div class="seg" id="f-selfcare">
+      <button data-v="能自理" onclick="pickSeg(this)">能自理</button>
+      <button data-v="半自理" onclick="pickSeg(this)">半自理</button>
+      <button data-v="失能" onclick="pickSeg(this)">失能</button>
+    </div>
+    <label class="form-label"><span class="req">*</span>健康状况及注意事项</label>
+    <textarea class="form-textarea" id="f-health" placeholder="如：高血压、糖尿病、术后卧床、饮食禁忌等"></textarea>
+    <div id="place-home">
+      <label class="form-label"><span class="req">*</span>服务地址</label>
+      <input class="form-input" id="f-address" placeholder="请输入详细地址（含小区、楼栋、门牌号）">
+    </div>
+    <div id="place-hosp" style="display:none;">
+      <label class="form-label"><span class="req">*</span>就诊医院</label>
+      <input class="form-input" id="f-hospital" placeholder="请输入医院名称">
+      <label class="form-label"><span class="req">*</span>科室及病房</label>
+      <input class="form-input" id="f-ward" placeholder="如：骨科 3号楼12床">
+    </div>
+    <label class="form-label"><span class="req">*</span>服务时长</label>
+    <div class="seg" id="f-duration">
+      <button data-v="3天" onclick="pickSeg(this)">3天</button>
+      <button data-v="5天" onclick="pickSeg(this)">5天</button>
+      <button data-v="7天" onclick="pickSeg(this)">7天</button>
+      <button data-v="长期" onclick="pickSeg(this)">长期</button>
+    </div>
+    <label class="form-label"><span class="req">*</span>预约开始时间</label>
+    <input class="form-input" id="f-date" type="date">
+    <div id="upload-wrap" style="display:none;">
+      <label class="form-label">就医材料上传（出院小结、住院申请单等，用于服务评估核验）</label>
+      <div class="upload-box" onclick="this.querySelector('.up').textContent='✅';this.style.borderColor='#0FA35B';this.querySelector('.t').textContent='已选择：出院小结.pdf（演示）'"><span class="up">📤</span><span class="t">点击上传 出院小结 / 住院申请单</span></div>
+    </div>
+    <div class="price-hint"><span>参考价格（按评估方案确认后结算）</span><b>300元/天</b></div>
+    <button class="btn" style="margin-top:16px;" onclick="submitBooking()">提交预约</button>
+    <div style="text-align:center;font-size:12px;color:var(--ink-3);margin-top:10px;">提交后平台将在 <b style="color:var(--pa-orange);">2小时内</b> 首次响应，<b style="color:var(--pa-orange);">24小时内</b> 落实服务并安排护工到岗</div>
+  </div>
+</div>
+
+<!-- ============ 综合评估确认页 ============ -->
+<div id="view-assess" class="view no-tab">
+  <div class="navbar"><div class="ph"></div><div class="title">综合评估确认</div><div class="ph"></div></div>
+  <div class="card">
+    <div class="assess-ok">
+      <div class="okic">✓</div>
+      <h2>评估通过</h2>
+      <p>平台已根据您提交的信息完成综合评估</p>
+    </div>
+    <div class="divider"></div>
+    <div class="plan-grid" id="assess-plan"></div>
+    <div class="notice">⚠️ 护工到岗、服务过程、离岗三个环节将拍摄含时间、地点的水印照片上传平台核验，作为服务时长认定的自证依据。</div>
+  </div>
+  <div class="card">
+    <button class="btn" onclick="confirmPlan()">确认服务方案，等待派单</button>
+  </div>
+</div>
+
+<!-- ============ 订单列表 ============ -->
+<div id="view-orders" class="view">
+  <div class="navbar"><div class="ph"></div><div class="title">我的订单</div><div class="ph"></div></div>
+  <div id="orders-list"></div>
+</div>
+
+<!-- ============ 订单详情 ============ -->
+<div id="view-order-detail" class="view no-tab">
+  <div class="navbar"><button class="back" onclick="goto('view-orders')">‹</button><div class="title">订单详情</div><div class="ph"></div></div>
+  <div id="order-detail-body"></div>
+</div>
+
+<!-- ============ 评价页 ============ -->
+<div id="view-rate" class="view no-tab">
+  <div class="navbar"><button class="back" onclick="goto('view-order-detail')">‹</button><div class="title">满意度评价</div><div class="ph"></div></div>
+  <div class="card">
+    <div style="text-align:center;font-size:16px;font-weight:600;">本次服务您的整体满意度</div>
+    <div class="rate-stars" id="rate-stars"></div>
+    <div class="rate-tags" id="rate-tags"></div>
+    <textarea class="form-textarea" id="rate-text" placeholder="说一说本次服务的感受（选填）"></textarea>
+    <button class="btn" style="margin-top:16px;" onclick="submitRate()">提交评价</button>
+  </div>
+</div>
+
+<!-- ============ 我的 ============ -->
+<div id="view-me" class="view">
+  <div class="me-top">
+    <div class="avatar" id="me-avatar">客</div>
+    <div><h2 id="me-name">客户</h2><p>已实名 · 授权已生效</p></div>
+  </div>
+  <div class="me-list">
+    <div class="card">
+      <button class="me-row" onclick="goto('view-orders')"><span class="mi">📋</span>我的订单<span class="arr">›</span></button>
+      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi">📄</span>个人信息处理授权书<span class="arr">›</span></button>
+      <button class="me-row" onclick="openAgreement('user')"><span class="mi">🧾</span>用户服务协议<span class="arr">›</span></button>
+      <button class="me-row" onclick="alert('演示环境：服务保障热线 400-000-0000（7×24小时）')"><span class="mi">☎️</span>服务保障热线（7×24）<span class="arr">›</span></button>
+    </div>
+    <div class="card" style="font-size:13px;color:var(--ink-3);">深圳壹账通智能科技有限公司 · 照护服务预约平台（演示版）</div>
+  </div>
+</div>
+
+<!-- ============ 底部标签栏 ============ -->
+<div class="tabbar hidden" id="tabbar">
+  <button class="tab on" data-tab="view-home" onclick="showTab('view-home')"><span class="tico">🏠</span>首页</button>
+  <button class="tab" data-tab="view-book" onclick="showTab('view-book')"><span class="tico">📝</span>预约</button>
+  <button class="tab" data-tab="view-orders" onclick="showTab('view-orders')"><span class="tico">📋</span>订单</button>
+  <button class="tab" data-tab="view-me" onclick="showTab('view-me')"><span class="tico">👤</span>我的</button>
+</div>
+
+<!-- ============ 二次授权确认弹窗 ============ -->
+<div class="mask" id="mask-auth">
+  <div class="sheet" style="position:relative;">
+    <button class="close" onclick="hideMask('mask-auth')">✕</button>
+    <h3>授权确认</h3>
+    <div class="auth-words">
+      为完成本次照护服务预约与派单履约，平台将向合作服务商提供以下必要信息：<b>服务对象姓名、联系电话、服务地址/就诊医院信息、自理能力状况、健康状况及注意事项</b>（及就医材料）。供应商仅在履约必需范围内使用，您的身份证号、银行账户等敏感信息不会提供。您可随时在"我的"页面查看《个人信息处理授权书》。
+    </div>
+    <div class="confirm-grid" id="auth-grid"></div>
+    <button class="btn" onclick="authConfirm()">确认授权并提交</button>
+    <button class="btn plain" style="margin-top:10px;height:44px;" onclick="hideMask('mask-auth')">暂不提交</button>
+  </div>
+</div>
+
+<!-- ============ 进度演示弹窗 ============ -->
+<div class="mask" id="mask-demo">
+  <div class="sheet" style="position:relative;">
+    <button class="close" onclick="hideMask('mask-demo')">✕</button>
+    <h3>演示操作</h3>
+    <p style="font-size:13px;color:var(--ink-3);text-align:center;margin-bottom:14px;">演示环境可手动推进服务节点，体验完整链路</p>
+    <div id="demo-actions"></div>
+  </div>
+</div>
+
+</div>
+<script>
+/* ================= 状态与数据 ================= */
+var state = {
+  logged:false, userName:"", phone:"",
+  bookType:"home", selfcare:"", duration:"",
+  pendingOrder:null, authOrder:null,
+  orders:[
+    {id:"ZH2026092300001", type:"home", name:"王建国", status:6, worker:{name:"李秀兰",age:48,hometown:"湖南 长沙",cert:"养老护理员（高级）· 已实名核验"},
+     info:{selfcare:"半自理", health:"高血压，行动缓慢，需协助洗漱", place:"深圳市南山区科苑花园 35栋2单元801", duration:"5天", start:"2026-09-22"},
+     nodeTimes:{0:"09-22 10:32",1:"09-22 10:35",2:"09-22 10:40",3:"09-23 08:03",4:"09-23 14:26",5:"09-23 17:05",6:"09-23 17:08"},
+     photos:[
+       {label:"到岗",icon:"🚪",time:"09-23 08:03",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"到岗照片：含门牌/住址标识水印"},
+       {label:"服务过程",icon:"🛏️",time:"09-23 14:26",loc:"深圳市南山区科苑花园35栋2单元801（室内）",note:"过程照片：含时间地点水印"},
+       {label:"离岗",icon:"🌇",time:"09-23 17:05",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"离岗照片：含门牌/住址标识水印"}]},
+    {id:"ZH2026092100007", type:"hosp", name:"王建国", status:7, worker:{name:"陈国强",age:51,hometown:"广东 梅州",cert:"医疗照护员 · 已实名核验"},
+     info:{selfcare:"失能", health:"股骨骨折术后卧床", place:"深圳市第二人民医院 骨科 3号楼12床", duration:"3天", start:"2026-09-18"},
+     nodeTimes:{}, photos:[]}
+  ],
+  rateStars:0, rateTags:[], curOrder:null, agBack:"view-login", agSigned:{user:false,privacy:false}
+};
+var NODES = ["提交预约","接单","派单","护工到岗","服务过程","护工离岗","核销","满意度评价"];
+var STATUS_TEXT = {1:"待接单",2:"已派单",3:"服务中（已到岗）",4:"服务中",5:"待核销",6:"待评价",7:"已完成",0:"评估确认中"};
+var RATE_TAG_POOL = ["按时到岗","服务专业","耐心细致","沟通顺畅","房间整洁","响应及时"];
+
+/* ================= 视图切换 ================= */
+var TAB_VIEWS = ["view-home","view-book","view-orders","view-me"];
+function hideAll(){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));}
+function goto(id){
+  hideAll();
+  document.getElementById(id).classList.add("active");
+  document.getElementById(id).classList.toggle("no-tab", TAB_VIEWS.indexOf(id)<0);
+  document.getElementById("tabbar").classList.toggle("hidden", TAB_VIEWS.indexOf(id)<0);
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on", t.dataset.tab===id));
+  window.scrollTo(0,0);
+  if(id==="view-orders") renderOrders();
+}
+function showTab(id){ if(id==="view-book") renderBookType(); goto(id); }
+function backFromAgreement(){ goto(state.agBack); }
+
+/* ================= 登录与授权 ================= */
+function sendCode(){
+  var p=document.getElementById("login-phone").value.trim();
+  if(!/^1\d{10}$/.test(p)){alert("请输入正确的11位手机号");return;}
+  var b=document.getElementById("btn-code");b.disabled=true;var s=60;
+  b.textContent=s+"秒后重发";var iv=setInterval(function(){s--;if(s<=0){clearInterval(iv);b.disabled=false;b.textContent="获取验证码";}else b.textContent=s+"秒后重发";},1000);
+  alert("演示环境：验证码为 123456");
+}
+function doLogin(){
+  var p=document.getElementById("login-phone").value.trim();
+  var c=document.getElementById("login-code").value.trim();
+  if(!/^1\d{10}$/.test(p)){alert("请输入正确的11位手机号");return;}
+  if(c!=="123456"){alert("请输入正确验证码（演示：123456）");return;}
+  if(!document.getElementById("chk-agree").checked){
+    alert("请先勾选同意《用户服务协议》和《个人信息处理授权书》后方可登录");
+    return;
+  }
+  state.logged=true;state.phone=p;state.userName=p.slice(7)+"客户";
+  document.getElementById("home-hi").textContent="您好，"+state.userName;
+  document.getElementById("me-name").textContent=state.userName;
+  document.getElementById("me-avatar").textContent=state.userName.charAt(0);
+  document.getElementById("f-phone").value=p;
+  goto("view-home");
+}
+function openAgreement(kind){
+  state.agBack = state.logged ? "view-me" : "view-login";
+  var titles={user:"用户服务协议",privacy:"个人信息处理授权书"};
+  var bodies={
+    user:"<h3>一、服务说明</h3><p>本平台为您提供居家照护（上门照护）与院内照护（住院陪护）服务的在线预约、综合评估、派单跟踪、节点核验与满意度评价服务。</p><h3>二、服务流程</h3><p>您提交预约后，平台将在2小时内首次响应，24小时内落实服务并安排护工到岗；护工到岗、服务过程、离岗三个环节将拍摄含时间、地点的水印照片上传平台核验。</p><h3>三、服务标准</h3><p>护工均经实名核验与岗前培训；服务内容涵盖基本生活照护、清洁与卫生、情况观察、专项照护、关怀与陪同五大类。</p><h3>四、费用与结算</h3><p>服务费用按综合评估确认后的服务方案结算，参考价格以页面展示为准，最终以服务方案与订单确认为准。</p>",
+    privacy:"<h3>一、授权范围</h3><p>为实现照护服务的预约、评估与派单履约目的，您同意平台处理并向合作服务商提供以下必要个人信息：服务对象姓名、联系电话、服务地址（居家）或就诊医院、科室、病房信息（院内）、自理能力状况、健康状况及注意事项，以及出院小结等就医材料。</p><h3>二、信息保护</h3><p>您的身份证号、银行账户等敏感个人信息不出平台、不向服务商提供。平台与服务商均对您的个人信息承担保密义务，仅在履约必需范围内使用。</p><h3>三、您的权利</h3><p>您可随时查询、更正您的个人信息，可在\"我的\"页面查阅本授权书；如需撤回授权或注销账户，可通过服务保障热线联系我们。</p>"
+  };
+  document.getElementById("ag-title").textContent=titles[kind];
+  document.getElementById("ag-body").innerHTML=bodies[kind];
+  document.getElementById("chk-ag-sign").checked = state.agSigned[kind];
+  goto("view-agreement");
+  document.getElementById("btn-ag-sign").onclick=function(){signAgreement(kind);};
+}
+function signAgreement(kind){
+  if(!kind) kind = state.agSigned.privacy && !state.agSigned.user ? "user" : (document.getElementById("ag-title").textContent==="用户服务协议"?"user":"privacy");
+  if(!document.getElementById("chk-ag-sign").checked){alert("请先勾选\"我已阅读并同意\"");return;}
+  state.agSigned[kind]=true;
+  if(!state.logged){
+    // 授权签署完成回到登录页，自动勾选同意
+    document.getElementById("chk-agree").checked=true;
+    goto("view-login");
+    alert("《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》签署成功");
+  }else{
+    goto("view-me");
+    alert("您已完成《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》查阅与签署");
+  }
+}
+
+/* ================= 预约 ================= */
+function gotoBook(type){ state.bookType=type; renderBookType(); goto("view-book"); }
+function switchType(t){ state.bookType=t; renderBookType(); }
+function renderBookType(){
+  document.getElementById("ts-home").classList.toggle("on",state.bookType==="home");
+  document.getElementById("ts-hosp").classList.toggle("on",state.bookType==="hosp");
+  document.getElementById("place-home").style.display = state.bookType==="home"?"block":"none";
+  document.getElementById("place-hosp").style.display = state.bookType==="hosp"?"block":"none";
+  document.getElementById("upload-wrap").style.display = state.bookType==="hosp"?"block":"none";
+}
+function pickSeg(btn){
+  var box=btn.parentNode; box.querySelectorAll("button").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  if(box.id==="f-selfcare") state.selfcare=btn.dataset.v;
+  if(box.id==="f-duration") state.duration=btn.dataset.v;
+}
+function submitBooking(){
+  var g=function(id){return document.getElementById(id).value.trim();};
+  if(!g("f-name")){alert("请输入服务对象姓名");return;}
+  if(!/^1\d{10}$/.test(g("f-phone"))){alert("请输入正确的11位联系电话");return;}
+  if(!state.selfcare){alert("请选择自理能力状况");return;}
+  if(!g("f-health")){alert("请填写健康状况及注意事项");return;}
+  if(state.bookType==="home" && !g("f-address")){alert("请输入服务地址");return;}
+  if(state.bookType==="hosp" && (!g("f-hospital")||!g("f-ward"))){alert("请输入就诊医院及科室病房");return;}
+  if(!state.duration){alert("请选择服务时长");return;}
+  if(!g("f-date")){alert("请选择预约开始时间");return;}
+  state.pendingOrder={
+    id:"ZH"+g("f-date").replace(/-/g,"")+"000"+(state.orders.length+1),
+    type:state.bookType, name:g("f-name"),
+    info:{selfcare:state.selfcare, health:g("f-health"),
+      place: state.bookType==="home"?g("f-address"):(g("f-hospital")+" "+g("f-ward")),
+      duration:state.duration, start:g("f-date")}
+  };
+  showAuthConfirm();
+}
+function showAuthConfirm(){
+  var o=state.pendingOrder;
+  document.getElementById("auth-grid").innerHTML =
+    "<span class='k'>服务类型</span><span>"+(o.type==="home"?"居家照护":"院内照护")+"</span>"+
+    "<span class='k'>服务对象</span><span>"+o.name+"（"+o.info.selfcare+"）</span>"+
+    "<span class='k'>联系电话</span><span>"+document.getElementById("f-phone").value.trim()+"</span>"+
+    "<span class='k'>服务地点</span><span>"+o.info.place+"</span>"+
+    "<span class='k'>服务时长</span><span>"+o.info.duration+"（"+o.info.start+"起）</span>"+
+    "<span class='k'>提供对象</span><span>合作服务商（仅履约必需信息）</span>";
+  document.getElementById("mask-auth").classList.add("show");
+}
+function hideMask(id){document.getElementById(id).classList.remove("show");}
+function authConfirm(){
+  hideMask("mask-auth");
+  var o=state.pendingOrder;
+  o.status=0; o.worker=null; o.nodeTimes={0:nowHM()}; o.photos=[];
+  state.orders.unshift(o);
+  state.pendingOrder=null;
+  renderAssess(o);
+  goto("view-assess");
+}
+
+/* ================= 评估确认 ================= */
+function renderAssess(o){
+  var w = o.type==="home"?"1名住家护工":"1名一对一陪护护工";
+  document.getElementById("assess-plan").innerHTML =
+    "<span class='k'>评估结果</span><span class='v' style='color:var(--green);font-weight:700;'>通过，符合服务条件</span>"+
+    "<span class='k'>服务类型</span><span class='v'>"+(o.type==="home"?"居家照护（上门照护）":"院内照护（住院陪护）")+"</span>"+
+    "<span class='k'>服务对象</span><span class='v'>"+o.name+"（"+o.info.selfcare+"）</span>"+
+    "<span class='k'>服务方案</span><span class='v'>"+w+" · "+o.info.duration+"</span>"+
+    "<span class='k'>服务地点</span><span class='v'>"+o.info.place+"</span>"+
+    "<span class='k'>开始时间</span><span class='v'>"+o.info.start+"</span>"+
+    "<span class='k'>参考价格</span><span class='v' style='color:var(--pa-orange);'>300元/天</span>";
+}
+function confirmPlan(){
+  var o=state.orders[0];
+  o.status=1;
+  goto("view-orders");
+  setTimeout(function(){alert("方案已确认。平台将加密派单至合作服务商，服务商接单后将分配已完成实名核验的护工（演示：可在订单中推进节点）");},200);
+}
+
+/* ================= 订单 ================= */
+function statusTag(s){return STATUS_TEXT[s]||"";}
+function renderOrders(){
+  var el=document.getElementById("orders-list");
+  if(!state.orders.length){el.innerHTML="<div class='empty'>暂无订单，去首页预约服务吧</div>";return;}
+  el.innerHTML=state.orders.map(function(o,i){
+    return "<div class='order-card' onclick='openOrder("+i+")'>"+
+      "<div class='order-head'><b>"+(o.type==="home"?"🏠 居家照护":"🏥 院内照护")+"</b><span class='tag "+(o.status>=7?"green":(o.status>=3&&o.status<=5?"":"gray"))+"'>"+statusTag(o.status)+"</span></div>"+
+      "<div class='ord-no'>订单号 "+o.id+"</div><div class='divider'></div>"+
+      "<div class='order-info'><span>服务对象</span><span>"+o.name+"（"+o.info.selfcare+"）</span>"+
+      "<span>服务地点</span><span>"+o.info.place+"</span>"+
+      "<span>开始时间</span><span>"+o.info.start+" · "+o.info.duration+"</span></div>"+
+      "<div style='margin-top:12px;'><button class='btn plain' style='height:40px;font-size:14px;'>查看详情</button></div></div>";
+  }).join("");
+}
+function openOrder(i){
+  state.curOrder=i;
+  var o=state.orders[i];
+  var maxNode = Math.min(o.status, 7);
+  var tl="";
+  for(var n=0;n<NODES.length;n++){
+    var done = n<=maxNode && (n<=o.status);
+    var desc="", time="";
+    if(n===0)desc="已提交预约信息，等待平台综合评估";
+    if(n===1)desc="服务商已接单，准备分配护工";
+    if(n===2)desc="护工已分配，实名核验通过";
+    if(n===3)desc="护工已到岗，到岗水印照片已上传";
+    if(n===4)desc="服务进行中，过程水印照片留痕";
+    if(n===5)desc="当日服务完成，离岗水印照片已上传";
+    if(n===6)desc="平台节点核验完成，服务时长确认";
+    if(n===7)desc="感谢您对本次服务的评价";
+    if(done && o.nodeTimes[n])time=o.nodeTimes[n];
+    tl+="<div class='tl-item "+(done?"done":"")+"'><span class='nd'></span><div class='tl-t'>"+NODES[n]+"</div>"+
+        (done?"<div class='tl-d'>"+desc+"</div>"+(time?"<div class='tl-time'>🕓 "+time+"</div>":""):"")+"</div>";
+  }
+  var workerHtml="";
+  if(o.worker){
+    workerHtml="<div class='card'><div class='card-title'><span class='dot'></span>服务护工</div><div class='worker-card'>"+
+      "<div class='avatar'>"+o.worker.name.charAt(0)+"</div><div><h4>"+o.worker.name+" <span class='verified'>✓ 实名核验</span></h4>"+
+      "<p>"+o.worker.age+"岁 · "+o.worker.hometown+"</p><p>"+o.worker.cert+"</p></div></div></div>";
+  }
+  var photoHtml="";
+  if(o.photos.length){
+    photoHtml="<div class='card'><div class='card-title'><span class='dot'></span>水印照片自证</div><div class='photo-grid'>"+
+      o.photos.map(function(p){return "<div class='photo'><div class='img'>"+p.icon+"</div><div class='wm'><b>["+p.label+"]</b> "+p.time+"<br>📍"+p.loc+"</div></div>";}).join("")+
+      "</div><div class='notice' style='margin-top:12px;'>水印照片含时间与地点信息，为服务时长认定的唯一自证依据，平台后台核验。</div></div>";
+  }
+  var actionHtml="";
+  if(o.status===0) actionHtml="<button class='btn' onclick='confirmPlan()'>查看评估结果并确认方案</button>";
+  if(o.status===6) actionHtml="<button class='btn' onclick='openRate()'>进行满意度评价</button>";
+  if(o.status<6 && o.status>=1) actionHtml="<button class='btn plain' onclick='showDemoMask()'>演示：推进服务节点</button>";
+  if(o.status===7) actionHtml="<div class='tag green' style='padding:8px 16px;'>本单已完成，感谢您的信任</div>";
+  document.getElementById("order-detail-body").innerHTML =
+    "<div class='order-card'><div class='order-head'><b>"+(o.type==="home"?"居家照护":"院内照护")+"</b><span class='tag'>"+statusTag(o.status)+"</span></div>"+
+    "<div class='ord-no'>订单号 "+o.id+"</div><div class='divider'></div>"+
+    "<div class='order-info'><span>服务对象</span><span>"+o.name+"（"+o.info.selfcare+"）</span>"+
+    "<span>健康状况</span><span>"+o.info.health+"</span>"+
+    "<span>服务地点</span><span>"+o.info.place+"</span>"+
+    "<span>服务时长</span><span>"+o.info.duration+"（"+o.info.start+"起）</span></div></div>"+
+    workerHtml + photoHtml +
+    "<div class='card'><div class='card-title'><span class='dot'></span>服务进度（七节点）</div><div class='timeline'>"+tl+"</div></div>"+
+    "<div class='card'>"+actionHtml+"</div>";
+  goto("view-order-detail");
+}
+function showDemoMask(){
+  var o=state.orders[state.curOrder];
+  var steps={1:"模拟服务商接单",2:"模拟分配护工（实名核验）",3:"模拟护工到岗（上传水印照片）",4:"模拟服务过程（上传水印照片）",5:"模拟护工离岗（上传水印照片）",6:"模拟平台核销"};
+  var html="";
+  for(var k in steps){ html+="<button class='btn plain' style='margin-bottom:10px;height:44px;font-size:15px;' onclick='demoStep("+k+")'>"+(k)+"、"+steps[k]+"</button>"; }
+  document.getElementById("demo-actions").innerHTML=html;
+  document.getElementById("mask-demo").classList.add("show");
+}
+function demoStep(k){
+  hideMask("mask-demo");
+  var o=state.orders[state.curOrder];
+  o.status=parseInt(k);
+  o.nodeTimes[o.status]=nowHM();
+  if(o.status===2&&!o.worker)o.worker={name:"赵春梅",age:47,hometown:"广西 桂林",cert:"养老护理员（中级）· 已实名核验"};
+  if(o.status===3)o.photos.push({label:"到岗",icon:"🚪",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
+  if(o.status===4)o.photos.push({label:"服务过程",icon:"🛏️",time:nowHM(),loc:"服务地点（室内）",note:""});
+  if(o.status===5)o.photos.push({label:"离岗",icon:"🌇",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
+  openOrder(state.curOrder);
+  alert("已推进至【"+NODES[o.status]+"】节点");
+}
+function nowHM(){
+  var d=new Date(),p=function(n){return n<10?"0"+n:n;};
+  return p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+
+/* ================= 评价 ================= */
+function openRate(){
+  state.rateStars=0;state.rateTags=[];
+  var s=document.getElementById("rate-stars");
+  s.innerHTML="";for(var i=1;i<=5;i++)s.innerHTML+="<button data-s='"+i+"' onclick='pickStar("+i+")'>★</button>";
+  document.getElementById("rate-tags").innerHTML=RATE_TAG_POOL.map(function(t){return "<button onclick='pickTag(this)'>"+t+"</button>";}).join("");
+  document.getElementById("rate-text").value="";
+  goto("view-rate");
+}
+function pickStar(n){
+  state.rateStars=n;
+  document.querySelectorAll("#rate-stars button").forEach(function(b){b.classList.toggle("on",parseInt(b.dataset.s)<=n);});
+}
+function pickTag(btn){btn.classList.toggle("on");}
+function submitRate(){
+  if(!state.rateStars){alert("请先选择星级评分");return;}
+  var o=state.orders[state.curOrder];
+  o.status=7;o.nodeTimes[7]=nowHM();
+  goto("view-orders");
+  setTimeout(function(){alert("评价成功，感谢您的反馈！本单已完成。");},150);
+}
+
+/* ================= 初始化 ================= */
+document.getElementById("f-date").value="2026-09-24";
+</script>
+</body>
+</html>
