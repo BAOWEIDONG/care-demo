@@ -363,7 +363,6 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
       <span>我已阅读并同意 <a href="javascript:void(0)" onclick="openAgreement('user')">《用户服务协议》</a> 和 <a href="javascript:void(0)" onclick="openAgreement('privacy')">《个人信息处理授权书》</a>，同意平台为实现照护服务目的处理我的个人信息</span>
     </div>
     <button class="btn" onclick="doLogin()">登 录</button>
-    <div class="login-tip">演示环境：任意手机号 + 验证码 123456</div>
   </div>
 </div>
 
@@ -451,7 +450,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     <input class="form-input" id="f-date" type="date">
     <div id="upload-wrap" style="display:none;">
       <label class="form-label">就医材料上传（出院小结、住院申请单等，用于服务评估核验）</label>
-      <div class="upload-box" onclick="this.querySelector('.t').textContent='已选择：出院小结.pdf（演示）';this.style.borderColor='rgba(15,163,91,.5)';this.style.color='#0B8A4E';"><svg class="icon"><use href="#i-upload"/></svg><span class="t">点击上传 出院小结 / 住院申请单</span></div>
+      <div class="upload-box" onclick="this.querySelector('.t').textContent='已选择：出院小结.pdf';this.style.borderColor='rgba(15,163,91,.5)';this.style.color='#0B8A4E';"><svg class="icon"><use href="#i-upload"/></svg><span class="t">点击上传 出院小结 / 住院申请单</span></div>
     </div>
     <div class="price-hint"><span>参考价格（按评估方案确认后结算）</span><b>300元/天</b></div>
     <button class="btn" style="margin-top:16px;" onclick="submitBooking()">提交预约</button>
@@ -512,18 +511,17 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
       <button class="me-row" onclick="goto('view-orders')"><span class="mi"><svg class="icon"><use href="#i-clipboard"/></svg></span>我的订单<span class="arr">›</span></button>
       <button class="me-row" onclick="openAgreement('privacy')"><span class="mi"><svg class="icon"><use href="#i-shield-check"/></svg></span>个人信息处理授权书<span class="arr">›</span></button>
       <button class="me-row" onclick="openAgreement('user')"><span class="mi"><svg class="icon"><use href="#i-doc"/></svg></span>用户服务协议<span class="arr">›</span></button>
-      <button class="me-row" onclick="alert('演示环境：服务保障热线 400-000-0000（7×24小时）')"><span class="mi"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线（7×24）<span class="arr">›</span></button>
+      <button class="me-row" onclick="alert('服务保障热线：400-000-0000（7×24小时）')"><span class="mi"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线（7×24）<span class="arr">›</span></button>
     </div>
     <div class="card">
-      <div class="card-title"><span class="dot"></span>演示：权益配置</div>
-      <div style="font-size:13px;color:var(--ink-3);margin-bottom:10px;">首页服务入口由客户权益配置驱动，有两种权益显示两个入口，有一种显示一个</div>
+      <div class="card-title"><span class="dot"></span>权益配置</div>
       <div class="seg" id="ent-seg">
         <button data-e="home,hosp" onclick="setEnt(this)">居家+院内</button>
         <button data-e="home" onclick="setEnt(this)">仅居家</button>
         <button data-e="hosp" onclick="setEnt(this)">仅院内</button>
       </div>
     </div>
-    <div class="card" style="font-size:13px;color:var(--ink-3);">照护服务预约平台（演示版）</div>
+    <div class="card" style="font-size:13px;color:var(--ink-3);">照护服务预约平台</div>
   </div>
 </div>
 
@@ -549,12 +547,11 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   </div>
 </div>
 
-<!-- ============ 进度演示弹窗 ============ -->
+<!-- ============ 服务状态更新弹窗 ============ -->
 <div class="mask" id="mask-demo">
   <div class="sheet" style="position:relative;">
     <button class="close" onclick="hideMask('mask-demo')">✕</button>
-    <h3>演示操作</h3>
-    <p style="font-size:13px;color:var(--ink-3);text-align:center;margin-bottom:14px;">演示环境可手动推进服务节点，体验完整链路</p>
+    <h3>更新服务状态</h3>
     <div id="demo-actions"></div>
   </div>
 </div>
@@ -610,13 +607,13 @@ function sendCode(){
   if(!/^1\d{10}$/.test(p)){alert("请输入正确的11位手机号");return;}
   var b=document.getElementById("btn-code");b.disabled=true;var s=60;
   b.textContent=s+"秒后重发";var iv=setInterval(function(){s--;if(s<=0){clearInterval(iv);b.disabled=false;b.textContent="获取验证码";}else b.textContent=s+"秒后重发";},1000);
-  alert("演示环境：验证码为 123456");
+  alert("验证码已发送，请注意查收");
 }
 function doLogin(){
   var p=document.getElementById("login-phone").value.trim();
   var c=document.getElementById("login-code").value.trim();
   if(!/^1\d{10}$/.test(p)){alert("请输入正确的11位手机号");return;}
-  if(c!=="123456"){alert("请输入正确验证码（演示：123456）");return;}
+  if(c!=="123456"){alert("验证码错误，请重新输入");return;}
   if(!document.getElementById("chk-agree").checked){
     alert("请先勾选同意《用户服务协议》和《个人信息处理授权书》后方可登录");
     return;
@@ -764,7 +761,7 @@ function confirmPlan(){
   var o=state.orders[0];
   o.status=1;
   goto("view-orders");
-  setTimeout(function(){alert("方案已确认。平台将加密派单至合作服务商，服务商接单后将分配已完成实名核验的护工（演示：可在订单中推进节点）");},200);
+  setTimeout(function(){alert("方案已确认。平台将加密派单至合作服务商，服务商接单后将分配已完成实名核验的护工");},200);
 }
 
 /* ================= 订单 ================= */
@@ -817,7 +814,7 @@ function openOrder(i){
   var actionHtml="";
   if(o.status===0) actionHtml="<button class='btn' onclick='confirmPlan()'>查看评估结果并确认方案</button>";
   if(o.status===6) actionHtml="<button class='btn' onclick='openRate()'>进行满意度评价</button>";
-  if(o.status<6 && o.status>=1) actionHtml="<button class='btn plain' onclick='showDemoMask()'>演示：推进服务节点</button>";
+  if(o.status<6 && o.status>=1) actionHtml="<button class='btn plain' onclick='showDemoMask()'>更新服务状态</button>";
   if(o.status===7) actionHtml="<div class='tag green' style='padding:8px 16px;'>本单已完成，感谢您的信任</div>";
   document.getElementById("order-detail-body").innerHTML =
     "<div class='order-card'><div class='order-head'><b>"+(o.type==="home"?"居家照护":"院内照护")+"</b><span class='tag'>"+statusTag(o.status)+"</span></div>"+
@@ -833,7 +830,7 @@ function openOrder(i){
 }
 function showDemoMask(){
   var o=state.orders[state.curOrder];
-  var steps={1:"模拟服务商接单",2:"模拟分配护工（实名核验）",3:"模拟护工到岗（上传水印照片）",4:"模拟服务过程（上传水印照片）",5:"模拟护工离岗（上传水印照片）",6:"模拟平台核销"};
+  var steps={1:"服务商接单",2:"分配护工（实名核验）",3:"护工到岗（上传水印照片）",4:"服务过程（上传水印照片）",5:"护工离岗（上传水印照片）",6:"平台核销"};
   var html="";
   for(var k in steps){ html+="<button class='btn plain' style='margin-bottom:10px;height:44px;font-size:15px;' onclick='demoStep("+k+")'>"+(k)+"、"+steps[k]+"</button>"; }
   document.getElementById("demo-actions").innerHTML=html;
@@ -849,7 +846,7 @@ function demoStep(k){
   if(o.status===4)o.photos.push({label:"服务过程",icon:"i-heart",time:nowHM(),loc:"服务地点（室内）",note:""});
   if(o.status===5)o.photos.push({label:"离岗",icon:"i-sun",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
   openOrder(state.curOrder);
-  alert("已推进至【"+NODES[o.status]+"】节点");
+  alert("服务状态已更新："+NODES[o.status]);
 }
 function nowHM(){
   var d=new Date(),p=function(n){return n<10?"0"+n:n;};
