@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>壹账通照护服务</title>
+<title>照护服务</title>
 <style>
 :root{
   --g-primary: linear-gradient(135deg,#FFA149 0%,#FF6600 50%,#FF4A00 100%);
@@ -314,7 +314,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 <div id="view-login" class="view no-tab active">
   <div class="login-hero">
     <div class="login-logo">🏥</div>
-    <h1>壹账通照护服务</h1>
+    <h1>照护服务</h1>
     <p>居家照护 · 院内照护 一站式预约平台</p>
   </div>
   <div class="login-panel">
@@ -348,20 +348,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     <div class="sub">专业照护服务 · 安心可托付</div>
   </div>
   <div class="home-body">
-    <div class="svc-grid">
-      <div class="svc-card" onclick="gotoBook('home')">
-        <div class="ic" style="background:var(--pa-orange-light);">🏠</div>
-        <h3>居家照护</h3>
-        <p>上门照护 · 住家陪护</p>
-        <span class="go">立即预约 ›</span>
-      </div>
-      <div class="svc-card" onclick="gotoBook('hosp')">
-        <div class="ic" style="background:#E8F1FB;">🏥</div>
-        <h3>院内照护</h3>
-        <p>住院陪护 · 一对一照护</p>
-        <span class="go">立即预约 ›</span>
-      </div>
-    </div>
+    <div class="svc-grid" id="svc-grid"></div>
     <div class="stat-strip">
       <div class="st"><b>2小时</b><span>预约后首次响应</span></div>
       <div class="st"><b>24小时</b><span>内护工到岗</span></div>
@@ -490,7 +477,16 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
       <button class="me-row" onclick="openAgreement('user')"><span class="mi">🧾</span>用户服务协议<span class="arr">›</span></button>
       <button class="me-row" onclick="alert('演示环境：服务保障热线 400-000-0000（7×24小时）')"><span class="mi">☎️</span>服务保障热线（7×24）<span class="arr">›</span></button>
     </div>
-    <div class="card" style="font-size:13px;color:var(--ink-3);">深圳壹账通智能科技有限公司 · 照护服务预约平台（演示版）</div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>演示：权益配置</div>
+      <div style="font-size:13px;color:var(--ink-3);margin-bottom:10px;">首页服务入口由客户权益配置驱动，有两种权益显示两个入口，有一种显示一个</div>
+      <div class="seg" id="ent-seg">
+        <button data-e="home,hosp" onclick="setEnt(this)">居家+院内</button>
+        <button data-e="home" onclick="setEnt(this)">仅居家</button>
+        <button data-e="hosp" onclick="setEnt(this)">仅院内</button>
+      </div>
+    </div>
+    <div class="card" style="font-size:13px;color:var(--ink-3);">照护服务预约平台（演示版）</div>
   </div>
 </div>
 
@@ -531,6 +527,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 /* ================= 状态与数据 ================= */
 var state = {
   logged:false, userName:"", phone:"",
+  entitlements:["home","hosp"],
   bookType:"home", selfcare:"", duration:"",
   pendingOrder:null, authOrder:null,
   orders:[
@@ -548,6 +545,10 @@ var state = {
   rateStars:0, rateTags:[], curOrder:null, agBack:"view-login", agSigned:{user:false,privacy:false}
 };
 var NODES = ["提交预约","接单","派单","护工到岗","服务过程","护工离岗","核销","满意度评价"];
+var SVC_META = {
+  home:{icon:"🏠", title:"居家照护", desc:"上门照护 · 住家陪护"},
+  hosp:{icon:"🏥", title:"院内照护", desc:"住院陪护 · 一对一照护"}
+};
 var STATUS_TEXT = {1:"待接单",2:"已派单",3:"服务中（已到岗）",4:"服务中",5:"待核销",6:"待评价",7:"已完成",0:"评估确认中"};
 var RATE_TAG_POOL = ["按时到岗","服务专业","耐心细致","沟通顺畅","房间整洁","响应及时"];
 
@@ -588,6 +589,32 @@ function doLogin(){
   document.getElementById("me-name").textContent=state.userName;
   document.getElementById("me-avatar").textContent=state.userName.charAt(0);
   document.getElementById("f-phone").value=p;
+  renderHomeSvc();
+  goto("view-home");
+}
+
+/* ================= 权益配置驱动服务入口 ================= */
+function renderHomeSvc(){
+  var g=document.getElementById("svc-grid");
+  if(!state.entitlements.length){
+    g.innerHTML="<div class='empty' style='width:100%;padding:26px 0;'>当前权益未包含照护服务，请联系客户经理开通</div>";
+    return;
+  }
+  g.innerHTML=state.entitlements.map(function(t){
+    var m=SVC_META[t];
+    return "<div class='svc-card' onclick=\"gotoBook('"+t+"')\">"+
+      "<div class='ic'>"+m.icon+"</div>"+
+      "<h3>"+m.title+"</h3><p>"+m.desc+"</p>"+
+      "<span class='go'>立即预约 ›</span></div>";
+  }).join("");
+}
+function setEnt(btn){
+  state.entitlements=btn.dataset.e.split(",");
+  document.querySelectorAll("#ent-seg button").forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");
+  if(state.entitlements.indexOf(state.bookType)<0) state.bookType=state.entitlements[0]||"home";
+  renderHomeSvc();
+  renderBookType();
   goto("view-home");
 }
 function openAgreement(kind){
@@ -619,9 +646,18 @@ function signAgreement(kind){
 }
 
 /* ================= 预约 ================= */
-function gotoBook(type){ state.bookType=type; renderBookType(); goto("view-book"); }
-function switchType(t){ state.bookType=t; renderBookType(); }
+function gotoBook(type){
+  if(state.entitlements.indexOf(type)<0){alert("当前权益未包含该服务，请联系客户经理开通");return;}
+  state.bookType=type; renderBookType(); goto("view-book");
+}
+function switchType(t){
+  if(state.entitlements.indexOf(t)<0){alert("当前权益未包含该服务");return;}
+  state.bookType=t; renderBookType();
+}
 function renderBookType(){
+  var only = state.entitlements.length===1;
+  document.querySelector(".type-switch").style.display = only?"none":"flex";
+  if(only) state.bookType=state.entitlements[0];
   document.getElementById("ts-home").classList.toggle("on",state.bookType==="home");
   document.getElementById("ts-hosp").classList.toggle("on",state.bookType==="hosp");
   document.getElementById("place-home").style.display = state.bookType==="home"?"block":"none";
@@ -807,6 +843,8 @@ function submitRate(){
 
 /* ================= 初始化 ================= */
 document.getElementById("f-date").value="2026-09-24";
+renderHomeSvc();
+document.querySelector("#ent-seg button[data-e='home,hosp']").classList.add("on");
 </script>
 </body>
 </html>
