@@ -317,6 +317,15 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 }
 .me-row:last-child{border-bottom:none;}
 .me-row .mi{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--g-primary);box-shadow:0 5px 12px rgba(255,90,0,.22);}
+.home-note{text-align:center;font-size:12px;color:var(--ink-3);padding:2px 0 6px;letter-spacing:.3px;}
+.set-card{padding:6px 16px;}
+.set-row{display:flex;align-items:center;gap:11px;width:100%;padding:13px 0;font-size:14px;font-weight:600;color:var(--ink);background:none;border-bottom:1px solid var(--line);text-align:left;}
+.set-row:last-child{border-bottom:none;}
+.set-row.static{cursor:default;}
+.set-ic{width:27px;height:27px;border-radius:9px;background:rgba(255,102,0,.1);color:#F26A00;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.set-ic .icon{width:15px;height:15px;stroke-width:1.9;}
+.set-main{flex:1;text-align:left;}
+.set-desc{font-size:12px;color:var(--ink-3);font-weight:400;margin-top:1px;}
 .me-row .arr{margin-left:auto;color:#C9CDD4;}
 .row-st{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:500;}
 .row-st.ok{color:#0B8A4E;font-weight:700;}
@@ -392,27 +401,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   </div>
   <div class="home-body">
     <div class="svc-grid" id="svc-grid"></div>
-    <div class="stat-strip">
-      <div class="st"><b>2小时</b><span>预约后首次响应</span></div>
-      <div class="st"><b>24小时</b><span>内护工到岗</span></div>
-      <div class="st"><b>7×24</b><span>服务保障热线</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>服务内容</div>
-      <div class="svc-item"><span class="n">1</span><div><h4>基本生活照护</h4><p>协助进食、饮水、翻身、移动等日常生活照料</p></div></div>
-      <div class="svc-item"><span class="n">2</span><div><h4>清洁与卫生</h4><p>个人清洁协助、居室与床单位卫生整理</p></div></div>
-      <div class="svc-item"><span class="n">3</span><div><h4>情况观察</h4><p>日常身体状况观察与异常情况及时反馈</p></div></div>
-      <div class="svc-item"><span class="n">4</span><div><h4>专项照护</h4><p>按评估方案执行的针对性专业照护</p></div></div>
-      <div class="svc-item"><span class="n">5</span><div><h4>关怀与陪同</h4><p>情感关怀、院内陪检与就医陪同</p></div></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>服务保障</div>
-      <div class="guarantee">
-        <div class="g"><b>实名核验</b><span>护工实名认证</span></div>
-        <div class="g"><b>水印留痕</b><span>三节点照片自证</span></div>
-        <div class="g"><b>平台核验</b><span>节点核验结算</span></div>
-      </div>
-    </div>
+    <div class="home-note">预约后 2小时内首次响应 · 24小时内护工到岗 · 7×24 服务保障</div>
   </div>
 </div>
 
@@ -514,13 +503,21 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     <div><h2 id="me-name">客户</h2><p>已实名 · 授权已生效</p></div>
   </div>
   <div class="me-list">
-    <div class="card">
-      <div class="me-row" style="cursor:default;"><span class="mi"><svg class="icon"><use href="#i-heart"/></svg></span>我的权益<span class="row-st" id="me-ent"></span></div>
-      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi"><svg class="icon"><use href="#i-shield-check"/></svg></span>个人信息处理授权书<span class="row-st" id="st-privacy">未签署</span><span class="arr">›</span></button>
-      <button class="me-row" onclick="openAgreement('user')"><span class="mi"><svg class="icon"><use href="#i-doc"/></svg></span>用户服务协议<span class="row-st" id="st-user">未签署</span><span class="arr">›</span></button>
-      <button class="me-row" onclick="alert('服务保障热线：400-000-0000（7×24小时）')"><span class="mi"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线（7×24）<span class="arr">›</span></button>
+    <div class="card set-card">
+      <button class="set-row" onclick="goto('view-agreements')"><span class="set-ic"><svg class="icon"><use href="#i-shield-check"/></svg></span>协议与授权<span class="row-st" id="st-all">未签署</span><span class="arr">›</span></button>
+      <div class="set-row static"><span class="set-ic"><svg class="icon"><use href="#i-heart"/></svg></span>我的权益<span class="row-st" id="me-ent"></span></div>
+      <button class="set-row" onclick="alert('服务保障热线：400-000-0000（7×24小时）')"><span class="set-ic"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线<span class="arr">›</span></button>
     </div>
     <div class="card" style="font-size:13px;color:var(--ink-3);">照护服务预约平台</div>
+  </div>
+</div>
+
+<!-- ============ 协议与授权 ============ -->
+<div id="view-agreements" class="view no-tab">
+  <div class="navbar"><button class="back" onclick="goto('view-me')">‹</button><div class="title">协议与授权</div><div class="ph"></div></div>
+  <div class="card set-card">
+    <button class="set-row" onclick="openAgreement('privacy')"><span class="set-ic"><svg class="icon"><use href="#i-shield-check"/></svg></span><div class="set-main"><div>个人信息处理授权书</div><div class="set-desc">授权平台处理并向服务商提供履约必需信息</div></div><span class="row-st" id="st-privacy">未签署</span><span class="arr">›</span></button>
+    <button class="set-row" onclick="openAgreement('user')"><span class="set-ic"><svg class="icon"><use href="#i-doc"/></svg></span><div class="set-main"><div>用户服务协议</div><div class="set-desc">服务预约、评估、派单与结算相关约定</div></div><span class="row-st" id="st-user">未签署</span><span class="arr">›</span></button>
   </div>
 </div>
 
@@ -660,7 +657,7 @@ function renderEnt(){
   if(el) el.textContent = state.entitlements.length ? state.entitlements.map(function(t){return SVC_META[t].title;}).join(" · ") : "暂无可用权益";
 }
 function openAgreement(kind){
-  state.agBack = state.logged ? "view-me" : "view-login";
+  state.agBack = state.logged ? document.querySelector(".view.active").id : "view-login";
   var titles={user:"用户服务协议",privacy:"个人信息处理授权书"};
   var bodies={
     user:"<h3>一、服务说明</h3><p>本平台为您提供居家照护（上门照护）与院内照护（住院陪护）服务的在线预约、综合评估、派单跟踪、节点核验与满意度评价服务。</p><h3>二、服务流程</h3><p>您提交预约后，平台将在2小时内首次响应，24小时内落实服务并安排护工到岗；护工到岗、服务过程、离岗三个环节将拍摄含时间、地点的水印照片上传平台核验。</p><h3>三、服务标准</h3><p>护工均经实名核验与岗前培训；服务内容涵盖基本生活照护、清洁与卫生、情况观察、专项照护、关怀与陪同五大类。</p><h3>四、费用与结算</h3><p>服务费用按综合评估确认后的服务方案结算，参考价格以页面展示为准，最终以服务方案与订单确认为准。</p>",
@@ -721,15 +718,22 @@ function confirmSign(){
     goto("view-login");
     alert(name+"签署成功");
   }else{
-    goto("view-me");
+    goto(state.agBack||"view-me");
     alert(name+"签署成功");
   }
 }
 function updateSigStatus(){
+  var signed=0;
   ["privacy","user"].forEach(function(k){
+    signed += state.agSigned[k]?1:0;
     var el=document.getElementById("st-"+k);
     if(el){el.textContent=state.agSigned[k]?"已签署":"未签署";el.classList.toggle("ok",!!state.agSigned[k]);}
   });
+  var all=document.getElementById("st-all");
+  if(all){
+    all.textContent = signed===2 ? "已全部签署" : (signed>0 ? "已签署 1/2" : "未签署");
+    all.classList.toggle("ok",signed===2);
+  }
 }
 
 /* ================= 预约 ================= */
