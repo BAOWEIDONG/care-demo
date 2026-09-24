@@ -318,6 +318,13 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 .me-row:last-child{border-bottom:none;}
 .me-row .mi{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--g-primary);box-shadow:0 5px 12px rgba(255,90,0,.22);}
 .me-row .arr{margin-left:auto;color:#C9CDD4;}
+.row-st{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:500;}
+.row-st.ok{color:#0B8A4E;font-weight:700;}
+.me-row .row-st + .arr{margin-left:6px;}
+.sig-pad{position:relative;background:#FAFBFC;border:1.5px solid #E5E6EB;border-radius:16px;margin:6px 0 16px;height:172px;overflow:hidden;}
+#sig-canvas{width:100%;height:100%;touch-action:none;display:block;}
+.sig-line{position:absolute;left:26px;right:26px;bottom:46px;border-bottom:1.5px dashed #D5D6DE;pointer-events:none;}
+.sig-clear{position:absolute;right:10px;top:8px;font-size:12px;color:var(--ink-3);background:rgba(120,120,128,.1);border-radius:10px;padding:3px 10px;z-index:2;}
 .empty{text-align:center;color:var(--ink-3);padding:56px 0;font-size:14px;}
 
 </style>
@@ -411,7 +418,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 
 <!-- ============ 预约页 ============ -->
 <div id="view-book" class="view no-tab">
-  <div class="navbar"><button class="back" onclick="showTab(currentTab)">‹</button><div class="title">服务预约</div><div class="ph"></div></div>
+  <div class="navbar"><button class="back" onclick="goto('view-home')">‹</button><div class="title">服务预约</div><div class="ph"></div></div>
   <div class="card">
     <div class="type-switch">
       <button id="ts-home" onclick="switchType('home')"><svg class="icon"><use href="#i-heart-home"/></svg>居家照护</button>
@@ -508,18 +515,10 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   </div>
   <div class="me-list">
     <div class="card">
-      <button class="me-row" onclick="goto('view-orders')"><span class="mi"><svg class="icon"><use href="#i-clipboard"/></svg></span>我的订单<span class="arr">›</span></button>
-      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi"><svg class="icon"><use href="#i-shield-check"/></svg></span>个人信息处理授权书<span class="arr">›</span></button>
-      <button class="me-row" onclick="openAgreement('user')"><span class="mi"><svg class="icon"><use href="#i-doc"/></svg></span>用户服务协议<span class="arr">›</span></button>
+      <div class="me-row" style="cursor:default;"><span class="mi"><svg class="icon"><use href="#i-heart"/></svg></span>我的权益<span class="row-st" id="me-ent"></span></div>
+      <button class="me-row" onclick="openAgreement('privacy')"><span class="mi"><svg class="icon"><use href="#i-shield-check"/></svg></span>个人信息处理授权书<span class="row-st" id="st-privacy">未签署</span><span class="arr">›</span></button>
+      <button class="me-row" onclick="openAgreement('user')"><span class="mi"><svg class="icon"><use href="#i-doc"/></svg></span>用户服务协议<span class="row-st" id="st-user">未签署</span><span class="arr">›</span></button>
       <button class="me-row" onclick="alert('服务保障热线：400-000-0000（7×24小时）')"><span class="mi"><svg class="icon"><use href="#i-headset"/></svg></span>服务保障热线（7×24）<span class="arr">›</span></button>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="dot"></span>权益配置</div>
-      <div class="seg" id="ent-seg">
-        <button data-e="home,hosp" onclick="setEnt(this)">居家+院内</button>
-        <button data-e="home" onclick="setEnt(this)">仅居家</button>
-        <button data-e="hosp" onclick="setEnt(this)">仅院内</button>
-      </div>
     </div>
     <div class="card" style="font-size:13px;color:var(--ink-3);">照护服务预约平台</div>
   </div>
@@ -528,7 +527,6 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 <!-- ============ 底部标签栏 ============ -->
 <div class="tabbar hidden" id="tabbar">
   <button class="tab on" data-tab="view-home" onclick="showTab('view-home')"><svg class="icon"><use href="#i-home"/></svg>首页</button>
-  <button class="tab" data-tab="view-book" onclick="showTab('view-book')"><svg class="icon"><use href="#i-calendar"/></svg>预约</button>
   <button class="tab" data-tab="view-orders" onclick="showTab('view-orders')"><svg class="icon"><use href="#i-clipboard"/></svg>订单</button>
   <button class="tab" data-tab="view-me" onclick="showTab('view-me')"><svg class="icon"><use href="#i-user"/></svg>我的</button>
 </div>
@@ -553,6 +551,21 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     <button class="close" onclick="hideMask('mask-demo')">✕</button>
     <h3>更新服务状态</h3>
     <div id="demo-actions"></div>
+  </div>
+</div>
+
+<!-- ============ 协议手写签名弹窗 ============ -->
+<div class="mask" id="mask-sig">
+  <div class="sheet" style="position:relative;">
+    <button class="close" onclick="hideMask('mask-sig')">✕</button>
+    <h3 id="sig-docname">签署协议</h3>
+    <div style="font-size:13px;color:var(--ink-2);text-align:center;margin-bottom:12px;">请在下方区域内手写本人签名，签名后将具有同等法律效力</div>
+    <div class="sig-pad">
+      <canvas id="sig-canvas"></canvas>
+      <div class="sig-line"></div>
+      <div class="sig-clear" onclick="clearSig()">清空重写</div>
+    </div>
+    <button class="btn" onclick="confirmSign()">确认签署</button>
   </div>
 </div>
 
@@ -587,7 +600,7 @@ var STATUS_TEXT = {1:"待接单",2:"已派单",3:"服务中（已到岗）",4:"�
 var RATE_TAG_POOL = ["按时到岗","服务专业","耐心细致","沟通顺畅","房间整洁","响应及时"];
 
 /* ================= 视图切换 ================= */
-var TAB_VIEWS = ["view-home","view-book","view-orders","view-me"];
+var TAB_VIEWS = ["view-home","view-orders","view-me"];
 function hideAll(){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));}
 function goto(id){
   hideAll();
@@ -642,14 +655,9 @@ function renderHomeSvc(){
       "<span class='go'>立即预约 ›</span></div>";
   }).join("");
 }
-function setEnt(btn){
-  state.entitlements=btn.dataset.e.split(",");
-  document.querySelectorAll("#ent-seg button").forEach(function(b){b.classList.remove("on");});
-  btn.classList.add("on");
-  if(state.entitlements.indexOf(state.bookType)<0) state.bookType=state.entitlements[0]||"home";
-  renderHomeSvc();
-  renderBookType();
-  goto("view-home");
+function renderEnt(){
+  var el=document.getElementById("me-ent");
+  if(el) el.textContent = state.entitlements.length ? state.entitlements.map(function(t){return SVC_META[t].title;}).join(" · ") : "暂无可用权益";
 }
 function openAgreement(kind){
   state.agBack = state.logged ? "view-me" : "view-login";
@@ -662,21 +670,66 @@ function openAgreement(kind){
   document.getElementById("ag-body").innerHTML=bodies[kind];
   document.getElementById("chk-ag-sign").checked = state.agSigned[kind];
   goto("view-agreement");
-  document.getElementById("btn-ag-sign").onclick=function(){signAgreement(kind);};
+  document.getElementById("btn-ag-sign").onclick=function(){openSign(kind);};
 }
-function signAgreement(kind){
-  if(!kind) kind = state.agSigned.privacy && !state.agSigned.user ? "user" : (document.getElementById("ag-title").textContent==="用户服务协议"?"user":"privacy");
+function openSign(kind){
   if(!document.getElementById("chk-ag-sign").checked){alert("请先勾选\"我已阅读并同意\"");return;}
+  state.agKind=kind;
+  document.getElementById("sig-docname").textContent="签署《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》";
+  document.getElementById("mask-sig").classList.add("show");
+  initSigCanvas();
+}
+var sigCtx=null, sigDrawing=false, sigHasStroke=false, sigReady=false;
+function initSigCanvas(){
+  var c=document.getElementById("sig-canvas");
+  c.width=c.offsetWidth||340; c.height=c.offsetHeight||170;
+  try{sigCtx=c.getContext("2d");}catch(e){sigCtx=null;}
+  sigHasStroke=false; sigDrawing=false;
+  if(sigCtx){
+    sigCtx.clearRect(0,0,c.width,c.height);
+    sigCtx.lineWidth=2.4; sigCtx.lineCap="round"; sigCtx.lineJoin="round"; sigCtx.strokeStyle="#1C1C1E";
+  }
+  if(!sigReady){
+    sigReady=true;
+    var pos=function(e){var r=c.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+    c.addEventListener("pointerdown",function(e){
+      if(!sigCtx)return; sigDrawing=true;
+      var p=pos(e); sigCtx.beginPath(); sigCtx.moveTo(p[0],p[1]); e.preventDefault();
+    });
+    c.addEventListener("pointermove",function(e){
+      if(!sigDrawing||!sigCtx)return;
+      var p=pos(e); sigCtx.lineTo(p[0],p[1]); sigCtx.stroke(); sigHasStroke=true;
+    });
+    window.addEventListener("pointerup",function(){sigDrawing=false;});
+    window.addEventListener("pointercancel",function(){sigDrawing=false;});
+  }
+}
+function clearSig(){
+  var c=document.getElementById("sig-canvas");
+  if(sigCtx)sigCtx.clearRect(0,0,c.width,c.height);
+  sigHasStroke=false;
+}
+function confirmSign(){
+  var kind=state.agKind;
+  if(sigCtx&&!sigHasStroke){alert("请在签名区手写本人签名");return;}
   state.agSigned[kind]=true;
+  hideMask("mask-sig");
+  updateSigStatus();
+  var name="《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》";
   if(!state.logged){
-    // 授权签署完成回到登录页，自动勾选同意
     document.getElementById("chk-agree").checked=true;
     goto("view-login");
-    alert("《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》签署成功");
+    alert(name+"签署成功");
   }else{
     goto("view-me");
-    alert("您已完成《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》查阅与签署");
+    alert(name+"签署成功");
   }
+}
+function updateSigStatus(){
+  ["privacy","user"].forEach(function(k){
+    var el=document.getElementById("st-"+k);
+    if(el){el.textContent=state.agSigned[k]?"已签署":"未签署";el.classList.toggle("ok",!!state.agSigned[k]);}
+  });
 }
 
 /* ================= 预约 ================= */
@@ -878,7 +931,8 @@ function submitRate(){
 /* ================= 初始化 ================= */
 document.getElementById("f-date").value="2026-09-24";
 renderHomeSvc();
-document.querySelector("#ent-seg button[data-e='home,hosp']").classList.add("on");
+renderEnt();
+updateSigStatus();
 </script>
 </body>
 </html>
