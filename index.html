@@ -293,6 +293,18 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 .worker-card p{font-size:13px;color:var(--ink-3);margin-top:2px;}
 .verified{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;color:#0B8A4E;background:rgba(15,163,91,.1);border-radius:8px;padding:2px 8px;}
 .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.mat-list{display:flex;flex-direction:column;gap:9px;}
+.mat-tile{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:16px;background:rgba(120,120,128,.06);}
+.mat-ic{width:38px;height:38px;border-radius:11px;background:rgba(62,142,247,.1);color:#3E8EF7;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mat-ic .icon{width:18px;height:18px;}
+.mat-main{flex:1;text-align:left;min-width:0;}
+.mat-main b{font-size:14px;font-weight:700;}
+.mat-main p{font-size:12px;color:var(--ink-3);margin-top:2px;}
+.mat-desc{font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:12px;}
+.mat-none{font-size:13px;color:var(--ink-3);padding:4px 0 10px;}
+.mat-add{margin-top:10px;border:1.5px dashed rgba(255,102,0,.4);border-radius:16px;padding:14px;text-align:center;color:#F26A00;font-size:14px;font-weight:600;background:rgba(255,102,0,.04);display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;}
+.mat-add .icon{width:17px;height:17px;}
+.mat-add:active{transform:scale(.98);}
 .photo{border-radius:18px;overflow:hidden;border:none;background:#fff;box-shadow:0 8px 20px rgba(31,38,135,.09);}
 .photo .img{height:100px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(150deg,#FFF4EA 0%,#FFE7D2 100%);}
 .photo .wm{font-size:11px;color:#fff;background:linear-gradient(90deg,rgba(28,20,12,.72),rgba(28,20,12,.5));padding:6px 9px;line-height:1.5;}
@@ -517,7 +529,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
     </div>
     <div class="divider"></div>
     <div class="plan-grid" id="assess-plan"></div>
-    <div class="notice">⚠️ 护工到岗、服务过程、离岗三个环节将拍摄含时间、地点的水印照片上传平台核验，作为服务时长认定的自证依据。</div>
+    <div class="notice">您的个人信息仅用于本次照护服务的预约、评估与履约，身份证号、银行账户等敏感信息不出平台、不向服务商提供。</div>
   </div>
   <div class="card">
     <button class="btn" onclick="confirmPlan()">确认服务方案，等待派单</button>
@@ -630,13 +642,10 @@ var state = {
     {id:"ZH2026092300001", type:"home", name:"王建国", status:6, worker:{name:"李秀兰",age:48,hometown:"湖南 长沙",cert:"养老护理员（高级）· 已实名核验"},
      info:{selfcare:"半自理", health:"高血压，行动缓慢，需协助洗漱", place:"深圳市南山区科苑花园 35栋2单元801", duration:"5天", start:"2026-09-22"},
      nodeTimes:{0:"09-22 10:32",1:"09-22 10:35",2:"09-22 10:40",3:"09-23 08:03",4:"09-23 14:26",5:"09-23 17:05",6:"09-23 17:08"},
-     photos:[
-       {label:"到岗",icon:"i-home",time:"09-23 08:03",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"到岗照片：含门牌/住址标识水印"},
-       {label:"服务过程",icon:"i-heart",time:"09-23 14:26",loc:"深圳市南山区科苑花园35栋2单元801（室内）",note:"过程照片：含时间地点水印"},
-       {label:"离岗",icon:"i-sun",time:"09-23 17:05",loc:"深圳市南山区科苑花园35栋2单元801（门牌）",note:"离岗照片：含门牌/住址标识水印"}]},
+     materials:[{name:"健康状况说明.jpg",icon:"i-doc",time:"09-22 10:30"}]},
     {id:"ZH2026092100007", type:"hosp", name:"王建国", status:7, worker:{name:"陈国强",age:51,hometown:"广东 梅州",cert:"医疗照护员 · 已实名核验"},
      info:{selfcare:"失能", health:"股骨骨折术后卧床", place:"深圳市第二人民医院 骨科 3号楼12床", duration:"3天", start:"2026-09-18"},
-     nodeTimes:{}, photos:[]}
+     nodeTimes:{}, materials:[{name:"住院通知书.jpg",icon:"i-doc",time:"09-18 09:12"},{name:"出院小结.pdf",icon:"i-doc",time:"09-18 09:15"}]}
   ],
   rateStars:0, rateTags:[], curOrder:null, agBack:"view-login", agSigned:{user:false,privacy:false},
   sigData:{user:null,privacy:null}, sigTime:{user:null,privacy:null}, orderBack:"view-orders"
@@ -707,6 +716,14 @@ function renderHistSvc(){
 function showTab(id){ if(id==="view-book") renderBookType(); goto(id); }
 function backFromAgreement(){ goto(state.agBack); }
 function backFromOrder(){ goto(state.orderBack||"view-orders"); }
+function addMaterial(){
+  var o=state.orders[state.curOrder];
+  if(!o.materials)o.materials=[];
+  var n=o.materials.filter(function(m){return m.sup;}).length+1;
+  o.materials.push({name:"补充材料"+n+".jpg",icon:"i-doc",time:nowHM(),sup:true});
+  openOrder(state.curOrder);
+  alert("影像材料已上传，等待平台确认");
+}
 
 /* ================= 登录与授权 ================= */
 function sendCode(){
@@ -757,7 +774,7 @@ function openAgreement(kind){
   state.agBack = state.logged ? document.querySelector(".view.active").id : "view-login";
   var titles={user:"用户服务协议",privacy:"个人信息处理授权书"};
   var bodies={
-    user:"<h3>一、服务说明</h3><p>本平台为您提供居家照护（上门照护）与院内照护（住院陪护）服务的在线预约、综合评估、派单跟踪、节点核验与满意度评价服务。</p><h3>二、服务流程</h3><p>您提交预约后，平台将在2小时内首次响应，24小时内落实服务并安排护工到岗；护工到岗、服务过程、离岗三个环节将拍摄含时间、地点的水印照片上传平台核验。</p><h3>三、服务标准</h3><p>护工均经实名核验与岗前培训；服务内容涵盖基本生活照护、清洁与卫生、情况观察、专项照护、关怀与陪同五大类。</p><h3>四、费用与结算</h3><p>服务费用按综合评估确认后的服务方案结算，参考价格以页面展示为准，最终以服务方案与订单确认为准。</p>",
+    user:"<h3>一、服务说明</h3><p>本平台为您提供居家照护（上门照护）与院内照护（住院陪护）服务的在线预约、综合评估、派单跟踪、节点核验与满意度评价服务。</p><h3>二、服务流程</h3><p>您提交预约后，平台将在2小时内首次响应，24小时内落实服务并安排护工到岗；护工到岗、服务过程、离岗等关键节点信息由平台记录核验，您可在订单详情中查看服务进度。</p><h3>三、服务标准</h3><p>护工均经实名核验与岗前培训；服务内容涵盖基本生活照护、清洁与卫生、情况观察、专项照护、关怀与陪同五大类。</p><h3>四、费用与结算</h3><p>服务费用按综合评估确认后的服务方案结算，参考价格以页面展示为准，最终以服务方案与订单确认为准。</p>",
     privacy:"<h3>一、授权范围</h3><p>为实现照护服务的预约、评估与派单履约目的，您同意平台处理并向合作服务商提供以下必要个人信息：服务对象姓名、联系电话、服务地址（居家）或就诊医院、科室、病房信息（院内）、自理能力状况、健康状况及注意事项，以及出院小结等就医材料。</p><h3>二、信息保护</h3><p>您的身份证号、银行账户等敏感个人信息不出平台、不向服务商提供。平台与服务商均对您的个人信息承担保密义务，仅在履约必需范围内使用。</p><h3>三、您的权利</h3><p>您可随时查询、更正您的个人信息，可在\"我的\"页面查阅本授权书；如需撤回授权或注销账户，可通过服务保障热线联系我们。</p>"
   };
   document.getElementById("ag-title").textContent=titles[kind];
@@ -883,12 +900,15 @@ function submitBooking(){
   if(state.bookType==="hosp" && (!g("f-hospital")||!g("f-ward"))){alert("请输入就诊医院及科室病房");return;}
   if(!state.duration){alert("请选择服务时长");return;}
   if(!g("f-date")){alert("请选择预约开始时间");return;}
+  var upEl=document.querySelector("#upload-wrap .t");
+  var mats=(state.bookType==="hosp"&&upEl&&upEl.textContent.indexOf("已选择")===0)?[{name:upEl.textContent.replace("已选择：",""),icon:"i-doc",time:nowHM()}]:[];
   state.pendingOrder={
     id:"ZH"+g("f-date").replace(/-/g,"")+"000"+(state.orders.length+1),
     type:state.bookType, name:g("f-name"),
     info:{selfcare:state.selfcare, health:g("f-health"),
       place: state.bookType==="home"?g("f-address"):(g("f-hospital")+" "+g("f-ward")),
-      duration:state.duration, start:g("f-date")}
+      duration:state.duration, start:g("f-date")},
+    materials:mats
   };
   showAuthConfirm();
 }
@@ -961,9 +981,9 @@ function openOrder(i){
     if(n===0)desc="已提交预约信息，等待平台综合评估";
     if(n===1)desc="服务商已接单，准备分配护工";
     if(n===2)desc="护工已分配，实名核验通过";
-    if(n===3)desc="护工已到岗，到岗水印照片已上传";
-    if(n===4)desc="服务进行中，过程水印照片留痕";
-    if(n===5)desc="当日服务完成，离岗水印照片已上传";
+    if(n===3)desc="护工已到岗，开始提供服务";
+    if(n===4)desc="服务进行中";
+    if(n===5)desc="当日服务完成，护工离岗";
     if(n===6)desc="平台节点核验完成，服务时长确认";
     if(n===7)desc="感谢您对本次服务的评价";
     if(done && o.nodeTimes[n])time=o.nodeTimes[n];
@@ -976,12 +996,17 @@ function openOrder(i){
       "<div class='avatar'>"+o.worker.name.charAt(0)+"</div><div><h4>"+o.worker.name+" <span class='verified'>✓ 实名核验</span></h4>"+
       "<p>"+o.worker.age+"岁 · "+o.worker.hometown+"</p><p>"+o.worker.cert+"</p></div></div></div>";
   }
-  var photoHtml="";
-  if(o.photos.length){
-    photoHtml="<div class='card'><div class='card-title'><span class='dot'></span>水印照片自证</div><div class='photo-grid'>"+
-      o.photos.map(function(p){return "<div class='photo'><div class='img'><svg class='icon'><use href='#"+p.icon+"'/></svg></div><div class='wm'><b>["+p.label+"]</b> "+p.time+"<br>📍"+p.loc+"</div></div>";}).join("")+
-      "</div><div class='notice' style='margin-top:12px;'>水印照片含时间与地点信息，为服务时长认定的唯一自证依据，平台后台核验。</div></div>";
-  }
+  var matHtml="";
+  var mats=o.materials||[];
+  var tiles=mats.map(function(m){
+    return "<div class='mat-tile'><span class='mat-ic'><svg class='icon'><use href='#"+(m.icon||"i-doc")+"'/></svg></span>"+
+      "<div class='mat-main'><b>"+m.name+"</b><p>"+(m.time||"")+" · "+(m.sup?"补充上传":"申请时上传")+"</p></div>"+
+      "<span class='tag gray'>已上传</span></div>";
+  }).join("");
+  matHtml="<div class='card'><div class='card-title'><span class='dot'></span>影像材料</div>"+
+    "<div class='mat-desc'>您在申请及履约过程中上传的就医/证明类材料，用于综合评估与服务安排，可在服务过程中补充。</div>"+
+    (mats.length?"<div class='mat-list'>"+tiles+"</div>":"<div class='mat-none'>申请时未上传影像材料</div>")+
+    "<div class='mat-add' onclick='addMaterial()'><svg class='icon'><use href='#i-upload'/></svg>补充影像材料</div></div>";
   var actionHtml="";
   if(o.status===0) actionHtml="<button class='btn' onclick='confirmPlan()'>查看评估结果并确认方案</button>";
   if(o.status===6) actionHtml="<button class='btn' onclick='openRate()'>进行满意度评价</button>";
@@ -994,14 +1019,14 @@ function openOrder(i){
     "<span>健康状况</span><span>"+o.info.health+"</span>"+
     "<span>服务地点</span><span>"+o.info.place+"</span>"+
     "<span>服务时长</span><span>"+o.info.duration+"（"+o.info.start+"起）</span></div></div>"+
-    workerHtml + photoHtml +
+    workerHtml + matHtml +
     "<div class='card'><div class='card-title'><span class='dot'></span>服务进度（七节点）</div><div class='timeline'>"+tl+"</div></div>"+
     "<div class='card'>"+actionHtml+"</div>";
   goto("view-order-detail");
 }
 function showDemoMask(){
   var o=state.orders[state.curOrder];
-  var steps={1:"服务商接单",2:"分配护工（实名核验）",3:"护工到岗（上传水印照片）",4:"服务过程（上传水印照片）",5:"护工离岗（上传水印照片）",6:"平台核销"};
+  var steps={1:"服务商接单",2:"分配护工（实名核验）",3:"护工到岗",4:"服务过程",5:"护工离岗",6:"平台核销"};
   var html="";
   for(var k in steps){ html+="<button class='btn plain' style='margin-bottom:10px;height:44px;font-size:15px;' onclick='demoStep("+k+")'>"+(k)+"、"+steps[k]+"</button>"; }
   document.getElementById("demo-actions").innerHTML=html;
@@ -1013,9 +1038,6 @@ function demoStep(k){
   o.status=parseInt(k);
   o.nodeTimes[o.status]=nowHM();
   if(o.status===2&&!o.worker)o.worker={name:"赵春梅",age:47,hometown:"广西 桂林",cert:"养老护理员（中级）· 已实名核验"};
-  if(o.status===3)o.photos.push({label:"到岗",icon:"i-home",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
-  if(o.status===4)o.photos.push({label:"服务过程",icon:"i-heart",time:nowHM(),loc:"服务地点（室内）",note:""});
-  if(o.status===5)o.photos.push({label:"离岗",icon:"i-sun",time:nowHM(),loc:"服务地点（门牌/住址标识）",note:""});
   openOrder(state.curOrder);
   alert("服务状态已更新："+NODES[o.status]);
 }
