@@ -340,6 +340,11 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 .ac-empty{text-align:center;padding:20px 0 22px;}
 .ac-empty b{display:block;font-size:14px;font-weight:700;color:var(--ink-2);}
 .ac-empty span{display:block;font-size:12px;color:var(--ink-3);margin-top:4px;}
+.ac-book{display:inline-block;width:auto;height:40px;padding:0 36px;margin-top:14px;font-size:14px;border-radius:20px;}
+.ag-signed{border:1px dashed rgba(60,60,67,.18);border-radius:16px;padding:18px 14px 14px;text-align:center;background:rgba(15,163,91,.04);margin-top:10px;}
+.sig-name{font-family:"Xingkai SC","STXingkai","KaiTi","Kaiti SC",cursive;font-size:30px;color:#1C1C1E;letter-spacing:2px;}
+.sig-img{max-width:220px;max-height:80px;margin:8px auto 0;display:block;}
+.sig-meta{font-size:12px;color:var(--ink-3);margin-top:8px;}
 .hist-row{display:flex;align-items:center;gap:11px;margin:0 14px 9px;padding:14px 15px;cursor:pointer;
   background:rgba(255,255,255,.9);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
   border:1px solid rgba(255,255,255,.95);border-radius:18px;box-shadow:0 6px 18px rgba(31,38,135,.05);transition:transform .15s ease;}
@@ -419,9 +424,16 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
   <div class="navbar"><button class="back" onclick="backFromAgreement()">‹</button><div class="title" id="ag-title">协议详情</div><div class="ph"></div></div>
   <div class="agreement-body" id="ag-body"></div>
   <div class="agreement-foot">
-    <input type="checkbox" class="checkbox" id="chk-ag-sign">
-    <span style="font-size:13px;color:var(--ink-2);flex-shrink:0;">我已阅读并同意</span>
-    <button class="btn" id="btn-ag-sign" onclick="signAgreement()">同意并签署</button>
+    <div id="ag-sign-wrap" style="display:flex;align-items:center;gap:10px;width:100%;">
+      <input type="checkbox" class="checkbox" id="chk-ag-sign">
+      <span style="font-size:13px;color:var(--ink-2);flex-shrink:0;">我已阅读并同意</span>
+      <button class="btn" id="btn-ag-sign" onclick="signAgreement()">同意并签署</button>
+    </div>
+    <div id="ag-signed-bar" style="display:none;align-items:center;justify-content:center;gap:8px;width:100%;">
+      <svg class="icon" style="width:17px;height:17px;color:#0B8A4E;stroke-width:2;"><use href="#i-shield-check"/></svg>
+      <span style="font-size:15px;font-weight:700;color:#0B8A4E;">已完成签署</span>
+      <span id="ag-signed-who" style="font-size:12px;color:var(--ink-3);"></span>
+    </div>
   </div>
 </div>
 
@@ -520,7 +532,7 @@ input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);outlin
 
 <!-- ============ 订单详情 ============ -->
 <div id="view-order-detail" class="view no-tab">
-  <div class="navbar"><button class="back" onclick="goto('view-orders')">‹</button><div class="title">订单详情</div><div class="ph"></div></div>
+  <div class="navbar"><button class="back" onclick="backFromOrder()">‹</button><div class="title">订单详情</div><div class="ph"></div></div>
   <div id="order-detail-body"></div>
 </div>
 
@@ -626,7 +638,8 @@ var state = {
      info:{selfcare:"失能", health:"股骨骨折术后卧床", place:"深圳市第二人民医院 骨科 3号楼12床", duration:"3天", start:"2026-09-18"},
      nodeTimes:{}, photos:[]}
   ],
-  rateStars:0, rateTags:[], curOrder:null, agBack:"view-login", agSigned:{user:false,privacy:false}
+  rateStars:0, rateTags:[], curOrder:null, agBack:"view-login", agSigned:{user:false,privacy:false},
+  sigData:{user:null,privacy:null}, sigTime:{user:null,privacy:null}, orderBack:"view-orders"
 };
 var NODES = ["提交预约","接单","派单","护工到岗","服务过程","护工离岗","核销","满意度评价"];
 var SVC_META = {
@@ -656,7 +669,8 @@ function renderActiveSvc(){
   for(var i=0;i<state.orders.length;i++){if(state.orders[i].status<7){idx=i;break;}}
   if(idx<0){
     card.onclick=null;
-    card.innerHTML="<div class='ac-empty'><b>暂无进行中的服务</b><span>预约后 2小时内首次响应 · 24小时内护工到岗</span></div>";
+    card.innerHTML="<div class='ac-empty'><b>暂无进行中的服务</b><span>预约后 2小时内首次响应 · 24小时内护工到岗</span>"+
+      "<button class='btn plain ac-book' onclick=\"gotoBook('"+(state.entitlements[0]||"home")+"')\">立即预约</button></div>";
   }else{
     var o=state.orders[idx];
     var st=statusTag(o.status);
@@ -692,6 +706,7 @@ function renderHistSvc(){
 }
 function showTab(id){ if(id==="view-book") renderBookType(); goto(id); }
 function backFromAgreement(){ goto(state.agBack); }
+function backFromOrder(){ goto(state.orderBack||"view-orders"); }
 
 /* ================= 登录与授权 ================= */
 function sendCode(){
@@ -746,8 +761,19 @@ function openAgreement(kind){
     privacy:"<h3>一、授权范围</h3><p>为实现照护服务的预约、评估与派单履约目的，您同意平台处理并向合作服务商提供以下必要个人信息：服务对象姓名、联系电话、服务地址（居家）或就诊医院、科室、病房信息（院内）、自理能力状况、健康状况及注意事项，以及出院小结等就医材料。</p><h3>二、信息保护</h3><p>您的身份证号、银行账户等敏感个人信息不出平台、不向服务商提供。平台与服务商均对您的个人信息承担保密义务，仅在履约必需范围内使用。</p><h3>三、您的权利</h3><p>您可随时查询、更正您的个人信息，可在\"我的\"页面查阅本授权书；如需撤回授权或注销账户，可通过服务保障热线联系我们。</p>"
   };
   document.getElementById("ag-title").textContent=titles[kind];
-  document.getElementById("ag-body").innerHTML=bodies[kind];
+  var signer=state.userName||"客户本人";
+  var signHtml="";
+  if(state.agSigned[kind]){
+    signHtml="<h3>签署信息</h3><div class='ag-signed'>"+
+      "<div class='sig-name'>"+signer+"</div>"+
+      (state.sigData[kind]?"<img class='sig-img' alt='手写签名' src='"+state.sigData[kind]+"'>":"")+
+      "<div class='sig-meta'>签署人："+signer+"（手写签名）"+(state.sigTime[kind]?" · 签署时间："+state.sigTime[kind]:"")+"</div></div>";
+  }
+  document.getElementById("ag-body").innerHTML=bodies[kind]+signHtml;
   document.getElementById("chk-ag-sign").checked = state.agSigned[kind];
+  document.getElementById("ag-sign-wrap").style.display = state.agSigned[kind]?"none":"flex";
+  document.getElementById("ag-signed-bar").style.display = state.agSigned[kind]?"flex":"none";
+  document.getElementById("ag-signed-who").textContent = state.agSigned[kind]?("签署人 "+signer):"";
   goto("view-agreement");
   document.getElementById("btn-ag-sign").onclick=function(){openSign(kind);};
 }
@@ -792,6 +818,10 @@ function confirmSign(){
   var kind=state.agKind;
   if(sigCtx&&!sigHasStroke){alert("请在签名区手写本人签名");return;}
   state.agSigned[kind]=true;
+  var c=document.getElementById("sig-canvas");
+  if(sigCtx&&sigHasStroke){try{state.sigData[kind]=c.toDataURL("image/png");}catch(e){}}
+  var d=new Date();function z(n){return (n<10?"0":"")+n;}
+  state.sigTime[kind]=d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+" "+z(d.getHours())+":"+z(d.getMinutes());
   hideMask("mask-sig");
   updateSigStatus();
   var name="《"+(kind==="user"?"用户服务协议":"个人信息处理授权书")+"》";
@@ -920,6 +950,8 @@ function renderOrders(){
 }
 function openOrder(i){
   state.curOrder=i;
+  var curView=document.querySelector(".view.active").id;
+  if(curView&&curView!=="view-order-detail")state.orderBack=curView;
   var o=state.orders[i];
   var maxNode = Math.min(o.status, 7);
   var tl="";
